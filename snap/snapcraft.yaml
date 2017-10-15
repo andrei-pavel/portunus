@@ -1,0 +1,14 @@
+name: curate-pkg
+version: '0.1'
+summary: All you need to carry your packages with you, multiple platforms supported
+description: |
+    Add keys, sources, repositories, install and purge all continuously or at
+    your discretion. Allows for easy reinstall of packages between machines.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+parts:
+  curate-pkg:
+    files: ./curate-pkg
+    plugin: copy
