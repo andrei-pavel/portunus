@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Copyright (C) 2017 Andrei Pavel, andrei.pavel@cti.pub.ro
+# Licensed under the MIT License
+
+# Fail script if any command fails.
+set -e
+
+# Print usage function.
+printUsage() {
+cat <<EOF
+Usage: $(basename "${0}") [options]
+Options:
+  [-d|--debug]
+  [-h|--help]
+EOF
+}
+
+# Traps
+# shellcheck disable=SC2154
+trap 'return_code=${?}; trap - EXIT; echo EXIT ${return_code}' EXIT
+trap 'return_code=${?}; trap - EXIT; echo HUP ${return_code}' HUP
+trap 'return_code=${?}; trap - EXIT; echo INT ${return_code}' INT
+trap 'return_code=${?}; trap - EXIT; echo QUIT ${return_code}' QUIT
+trap 'return_code=${?}; trap - EXIT; echo PIPE ${return_code}' PIPE
+trap 'return_code=${?}; trap - EXIT; echo TERM ${return_code}' TERM
+trap 'trap - EXIT; echo SIGINT' SIGINT
+trap 'trap - EXIT; echo SIGQUIT' SIGQUIT
+
+# Get script path and append it to PATH so other scripts are callable.
+script_path="$(dirname "$(readlink -f "${0}")")"
+PATH="${PATH}:${script_path}"
+
+# Parse arguments.
+home="${HOME}"
+while [[ ${#} -ge 1 ]]; do
+  # Debug mode
+  if [[ "${1}" == "-d" || "${1}" == "--debug" ]]; then
+    shift
+    set -x
+    continue
+  fi
+  # Help: display usage
+  if [[ "${1}" == "-h" || "${1}" == "--help" ]]; then
+    shift
+    printUsage
+    exit 0
+  fi
+  # home, used only internally when recalling this script with EUID
+  if [[ "${1}" == "--home" ]]; then
+    shift
+    home="${1}"
+    shift
+    continue
+  fi
+  # Unrecognized argument.
+  printf "\e[1m\e[31mERROR: Unrecognized argument %s.\e[0m\e[0m\n" "${1}" >&2
+  printUsage
+  exit 1
+done
+
+pushd ${script_path} > /dev/null
+{
+  mkdir --parents ${home}/.config/curate-pkg
+  for pkg_mgr in apt eopkg; do
+    if command -v ${pkg_mgr} &> /dev/null; then
+      install ${script_path}/share/empty.json ${home}/.config/curate-pkg/${pkg_mgr}.json
+    fi
+  done
+}
+popd > /dev/null
+
+# Needs to run as root but keep ${home}
+(( EUID != 0 )) && exec sudo -- "${0}" "${@}" --home ${HOME}
+
+pushd ${script_path} > /dev/null
+{
+  install bin/curate-pkg /usr/local/bin/curate-pkg
+  mkdir --parents /usr/local/share/curate-pkg
+  install share/* /usr/local/share/curate-pkg
+}
+popd > /dev/null
+

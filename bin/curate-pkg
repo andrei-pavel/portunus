@@ -6,7 +6,7 @@
 # Fail script if any command fails.
 set -e
 
-# Needs to run as root.
+# Needs to run as root but keep ${home}
 (( EUID != 0 )) && exec sudo -- "${0}" "${@}" --home ${HOME}
 
 # Print usage function.
@@ -75,7 +75,7 @@ while [[ ${#} -ge 1 ]]; do
   exit 1
 done
 
-source "/usr/local/spinner.sh"
+source "${script_path}/../share/curate-pkg/spinner.sh"
 
 if command -v apt &> /dev/null; then
   mkdir --parents "/etc/apt/sources.list.d"
@@ -120,8 +120,8 @@ fi
 # shellcheck disable=SC2068
 while true; do
   # Find out what there is to be done.
-  keys=("$(jq -r '.["keys"][]' < "${config}")")
-  repositories=("$(jq -r '.["repositories"][]' < "${config}")")
+  keys=("$(jq -r '.["keys"][]?' < "${config}")")
+  repositories=("$(jq -r '.["repositories"][]?' < "${config}")")
   sources=()
   for (( i=0; ; i++ )); do
     src="$(jq -r '.["sources"]'[${i}] < "${config}")"
@@ -130,9 +130,9 @@ while true; do
     fi
       sources+=( "${src}" )
   done
-  installables=("$(jq -r '.["installables"][]' < "${config}")")
-  wgetables=("$(jq -r '.["wgetables"][]' < "${config}")")
-  purgeables=("$(jq -r '.["purgeables"][]' < "${config}")")
+  installables=("$(jq -r '.["installables"][]?' < "${config}")")
+  wgetables=("$(jq -r '.["wgetables"][]?' < "${config}")")
+  purgeables=("$(jq -r '.["purgeables"][]?' < "${config}")")
   commands=()
   for (( i=0; ; i++ )); do
     cmd="$(jq -r '.["commands"]'[${i}] < "${config}")"
