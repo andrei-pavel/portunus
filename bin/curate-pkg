@@ -159,7 +159,7 @@ while true; do
   ${cleanup_added_sources}
   for src in "${sources[@]}"; do
     protocolless_src=$(echo "${src}" | cut -d '/' -f 3-)
-    if ! /bin/grep -F "$(echo "${protocolless_src}")" "$(echo "${source_files}")" > /dev/null; then
+    if ! /bin/grep -F "$(echo "${protocolless_src}")" ${source_files} > /dev/null; then
       eval ${add_source} "${src}" > /dev/null
     fi
   done
