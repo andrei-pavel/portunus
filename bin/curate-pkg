@@ -151,7 +151,7 @@ while true; do
 
   start_spinner "Adding repositories..."
   for repository in ${repositories[@]}; do
-    ${add_repository} "${repository}" > /dev/null
+    ${add_repository} "${repository}" &> /dev/null
   done
   stop_spinner ${?}
 
