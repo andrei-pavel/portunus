@@ -77,39 +77,29 @@ done
 
 source "${script_path}/../share/curate-pkg/spinner.sh"
 
-if command -v apt &> /dev/null; then
-  mkdir --parents "/etc/apt/sources.list.d"
-  source_files="$(find /etc/apt/sources.list.d -type f)"
-  config="${home}/.config/curate-pkg/apt.json"
-  check_package="dpkg-query -L"
-  add_key="apt-key add"
-  add_repository="apt-add-repository -y"
-  add_source=">> /etc/apt/sources.list.d/curate-pkg.list echo"
-  cleanup_added_sources="rm -f /etc/apt/sources.list.d/curate-pkg.list"
-  install="apt-get install -y"
-  purge="apt-get purge -y"
-  update="apt-get update -y"
-  upgrade="apt-get dist-upgrade -y"
-  autoremove="apt-get autoremove -y"
-  upgrade_os="do-release-upgrade"
-  manual_install="dpkg --install"
-elif command -v eopkg &> /dev/null; then
-  source_files=""
-  config="${home}/.config/curate-pkg/eopkg.json"
-  check_package="eopkg info " # needs grep 'Installed package'
-  add_key=":"
-  add_repository="eopkg add-repo -y"
-  add_source=":"
-  cleanup_added_sources=":"
-  install="eopkg install -y"
-  purge="eopkg remove -y"
-  update="eopkg update-repo -y"
-  upgrade="eopkg upgrade -y"
-  autoremove=":"
-  upgrade_os=":"
-  manual_install=":"
-else
-  printf "Unsupported package manager. Send the following output to developer:\n%s\n" "$(lsb_release -a 2> /dev/null)" >&2
+package_managers=$(cat <<EOF
+apt
+eopkg
+EOF
+)
+
+optional_package_managers=$(cat <<EOF
+flatpak
+npm
+snap
+EOF
+)
+
+found=false
+for package_manager in ${package_managers}; do
+  if command -v ${package_manager} 1> /dev/null; then
+    found=true
+    break
+  fi
+done
+
+if ! ${found}; then
+  printf "Warning: your package manager is not supported. Send the following output to the developer:\n%s\n" "$(lsb_release -a 2> /dev/null)" >&2
   exit 2
 fi
 
@@ -117,115 +107,138 @@ if ! command -v jq &> /dev/null; then
   ${install} jq
 fi
 
+source "${script_path}/../share/curate-pkg/spinner.sh"
+
+header() {
+  local title=${1}
+  local cols=$(tput cols)
+  local half_cols=$((cols / 2 - 12 ))
+  for (( i=0; i < ${half_cols}; i++ )); do
+    printf "#"
+  done
+  printf " %s " "${title}"
+  for (( i=0; i < ${half_cols}; i++ )); do
+    printf "#"
+  done
+  printf "\n"
+}
+
 # shellcheck disable=SC2068
 while true; do
-  # Find out what there is to be done.
-  keys=("$(jq -r '.["keys"][]?' < "${config}")")
-  repositories=("$(jq -r '.["repositories"][]?' < "${config}")")
-  sources=()
-  for (( i=0; ; i++ )); do
-    src="$(jq -r '.["sources"]'[${i}] < "${config}")"
-    if [[ ${src} == null ]]; then
-      break
+  for package_manager in ${package_managers} ${optional_package_managers}; do
+    if ! command -v ${package_manager} 1> /dev/null; then
+      continue
     fi
-      sources+=( "${src}" )
-  done
-  installables=("$(jq -r '.["installables"][]?' < "${config}")")
-  wgetables=("$(jq -r '.["wgetables"][]?' < "${config}")")
-  purgeables=("$(jq -r '.["purgeables"][]?' < "${config}")")
-  commands=()
-  for (( i=0; ; i++ )); do
-    cmd="$(jq -r '.["commands"]'[${i}] < "${config}")"
-    if [[ ${cmd} == null ]]; then
-      break
-    fi
-      commands+=( "${cmd}" )
-  done
-
-  # Do.
-  start_spinner "Adding keys..."
-  for key in ${keys[@]}; do
-    wget -q -O - "${key}" | ${add_key} - &> /dev/null
-  done
-  stop_spinner ${?}
-
-  start_spinner "Adding repositories..."
-  for repository in ${repositories[@]}; do
-    ${add_repository} "${repository}" &> /dev/null
-  done
-  stop_spinner ${?}
-
-  start_spinner "Adding sources..."
-  ${cleanup_added_sources}
-  for src in "${sources[@]}"; do
-    protocolless_src=$(echo "${src}" | cut -d '/' -f 3-)
-    if ! /bin/grep -F "$(echo "${protocolless_src}")" ${source_files} > /dev/null; then
-      eval ${add_source} "${src}" > /dev/null
-    fi
-  done
-  stop_spinner ${?}
-
-  start_spinner "Updating repositories..."
-  ${update} > /dev/null
-  stop_spinner ${?}
-
-  start_spinner "Installing..."
-  for package in ${installables[@]}; do
-    set +e
-    ${check_package} "${package}" &> /dev/null
-    return_code=${?}
-    set -e
-    if [[ ${return_code} -ne 0 ]]; then
-      ${install} "${package}" || true > /dev/null
-    fi
-  done
-  stop_spinner ${?}
-
-  start_spinner "wgetting..."
-  for wget in ${wgetables[@]}; do
-    name=$(echo ${wget} | cut -d '/' -f 3 | cut -d '.' -f 2)
-    directory="/usr/local/${name}"
-    if [[ ! -d ${directory} ]]; then
-      mkdir --parents ${directory}
-      file=$(mktemp --dry-run --tmpdir=${directory})
-      wget -q -O "${file}" "${wget}"
-      filetype=$(file "${file}")
-      if echo ${filetype} | /bin/grep -Ec "gzip|Zip" &> /dev/null; then
-          pushd ${directory}
-          {
-            unp "${file}" > /dev/null
-          }
-          popd
-      else
-        ${manual_install} "${file}" > /dev/null
+    header ${package_manager}
+    source "${script_path}/../share/curate-pkg/${package_manager}.sh"
+    # Find out what there is to be done.
+    keys=("$(jq -r '.["keys"][]?' < "${config}")")
+    repositories=("$(jq -r '.["repositories"][]?' < "${config}")")
+    sources=()
+    for (( i=0; ; i++ )); do
+      src="$(jq -r '.["sources"]'[${i}] < "${config}")"
+      if [[ ${src} == null ]]; then
+        break
       fi
-      rm "${file}"
-    fi
-  done
-  stop_spinner ${?}
+        sources+=( "${src}" )
+    done
+    installables=("$(jq -r '.["installables"][]?' < "${config}")")
+    wgetables=("$(jq -r '.["wgetables"][]?' < "${config}")")
+    purgeables=("$(jq -r '.["purgeables"][]?' < "${config}")")
+    commands=()
+    for (( i=0; ; i++ )); do
+      cmd="$(jq -r '.["commands"]'[${i}] < "${config}")"
+      if [[ ${cmd} == null ]]; then
+        break
+      fi
+        commands+=( "${cmd}" )
+    done
 
-  start_spinner "Purging..."
-  for package in ${purgeables[@]}; do
-    set +e
-    ${check_package} "${package}" &> /dev/null
-    return_code=${?}
-    set -e
-    if [[ ${return_code} -eq 0 ]]; then
-      ${purge} "${package}" > /dev/null
-    fi
-  done
-  stop_spinner ${?}
+    # Do.
+    start_spinner "Adding keys..."
+    for key in ${keys[@]}; do
+      wget -q -O - "${key}" | ${add_key} - &> /dev/null
+    done
+    stop_spinner ${?}
 
-  start_spinner "Running custom commands..."
-  for cmd in "${commands[@]}"; do
-    ${cmd}
-  done
-  stop_spinner ${?}
+    start_spinner "Adding repositories..."
+    for repository in ${repositories[@]}; do
+      ${add_repository} "${repository}" &> /dev/null
+    done
+    stop_spinner ${?}
 
-  ${upgrade}
-  ${autoremove}
-  ${upgrade_os} || true
-  ${cleanup_added_sources}
+    start_spinner "Adding sources..."
+    ${cleanup_added_sources}
+    for src in "${sources[@]}"; do
+      protocolless_src=$(echo "${src}" | cut -d '/' -f 3-)
+      if ! /bin/grep -F "$(echo "${protocolless_src}")" ${source_files} > /dev/null; then
+        eval ${add_source} "${src}" > /dev/null
+      fi
+    done
+    stop_spinner ${?}
+
+    start_spinner "Updating repositories..."
+    ${update} > /dev/null
+    stop_spinner ${?}
+
+    start_spinner "Installing..."
+    for package in ${installables[@]}; do
+      set +e
+      ${check_package} "${package}" &> /dev/null
+      return_code=${?}
+      set -e
+      if [[ ${return_code} -ne 0 ]]; then
+        ${install} "${package}" || true
+      fi
+    done
+    stop_spinner ${?}
+
+    start_spinner "wgetting..."
+    for wget in ${wgetables[@]}; do
+      name=$(echo ${wget} | cut -d '/' -f 3 | cut -d '.' -f 2)
+      directory="/usr/local/${name}"
+      if [[ ! -d ${directory} ]]; then
+        mkdir --parents ${directory}
+        file=$(mktemp --dry-run --tmpdir=${directory})
+        wget -q -O "${file}" "${wget}"
+        filetype=$(file "${file}")
+        if echo ${filetype} | /bin/grep -Ec "gzip|Zip" &> /dev/null; then
+            pushd ${directory}
+            {
+              unp "${file}" > /dev/null
+            }
+            popd
+        else
+          ${manual_install} "${file}" > /dev/null
+        fi
+        rm "${file}"
+      fi
+    done
+    stop_spinner ${?}
+
+    start_spinner "Purging..."
+    for package in ${purgeables[@]}; do
+      set +e
+      ${check_package} "${package}" &> /dev/null
+      return_code=${?}
+      set -e
+      if [[ ${return_code} -eq 0 ]]; then
+        ${purge} "${package}" > /dev/null
+      fi
+    done
+    stop_spinner ${?}
+
+    start_spinner "Running custom commands..."
+    for cmd in "${commands[@]}"; do
+      ${cmd}
+    done
+    stop_spinner ${?}
+
+    ${upgrade}
+    ${autoremove}
+    ${upgrade_os} || true
+    ${cleanup_added_sources}
+  done
   if ! ${auto}; then
     break
   fi

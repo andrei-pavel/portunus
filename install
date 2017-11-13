@@ -62,7 +62,7 @@ done
 pushd ${script_path} > /dev/null
 {
   mkdir --parents ${home}/.config/curate-pkg
-  for pkg_mgr in apt eopkg; do
+  for pkg_mgr in apt eopkg flatpak npm snap; do
     if command -v ${pkg_mgr} &> /dev/null; then
       if [[ ! -f ${home}/.config/curate-pkg/${pkg_mgr}.json ]]; then
         install ${script_path}/share/empty.json ${home}/.config/curate-pkg/${pkg_mgr}.json

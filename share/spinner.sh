@@ -83,6 +83,7 @@ function start_spinner {
     # set global spinner pid
     _sp_pid=$!
     disown
+    sleep 0.1s
 }
 
 function stop_spinner {
