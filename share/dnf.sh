@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2017 Andrei Pavel, andrei.pavel@cti.pub.ro
+# Copyright (C) 2017-2018 Andrei Pavel, andrei.pavel@cti.pub.ro
 # Licensed under the MIT License
 
 source_files=

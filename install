@@ -62,7 +62,7 @@ done
 pushd ${script_path} > /dev/null
 {
   mkdir -p ${home}/.config/curate-pkg
-  for package_manager in apt dnf eopkg flatpak go npm pacaur pacman snap yaourt; do
+  for package_manager in apt brew dnf eopkg flatpak go nix npm pacaur pacman snap yaourt; do
     if command -v ${package_manager} &> /dev/null; then
       if [[ ! -f ${home}/.config/curate-pkg/${package_manager}.json ]]; then
         install ${script_path}/share/empty.json ${home}/.config/curate-pkg/${package_manager}.json
