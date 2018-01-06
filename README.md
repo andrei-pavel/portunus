@@ -1,8 +1,8 @@
 # curate-pkg
 
-Supported: `apt`, `eopkg`, `flatpak`, `npm`, `snap`
+One-file installation tool for various package managers: `apt`, `dnf`, `eopkg`, `flatpak`, `go`, `npm`, `pacaur`, `pacman`, `snap`, `yaourt`
 
-All you need to carry your packages with you. Add keys, sources, repositories, install and purge all continuously or at your discretion. Allows for easy reinstall of packages between machines.
+All you need to carry your packages with you. Add keys, sources, repositories, install and purge all continuously or at your discretion. Allows for easy reinstall of packages when distro-hoping or just switching between machines.
 
 ## Installation
 
@@ -13,6 +13,7 @@ cd curate-pkg
 ```
 
 ## Configuration
+
 After installing, edit `~/.config/curate-pkg/*.json`.
 
 Samples:
@@ -22,12 +23,13 @@ Samples:
 - `npm`: https://gist.github.com/andrei-pavel/ac275b77cab59a9ce837194bea26fc2c
 - `snap`: https://gist.github.com/andrei-pavel/e0f47f6450bd688d13858de5e0a4560a
 
-## How to use
-Run `curate-pkg` everyday.
+## Usage
+
+Simply run `curate-pkg` everyday to keep all your packages up to date.
 
 When installing a new package, add it to `installables`, `wgetables` or `sources` and `keys` in `~/.config/curate-pkg/*.json`.
 
 When removing a package, add it to `purgeables` in `~/.config/curate-pkg/*.json`.
 
-`commands` is for any custom package management cmomand that you want to run in addition to installing and purging packages.
+`commands` is for any custom package management command that you want to run in addition to installing and purging packages.
 

@@ -8,12 +8,12 @@ set -e
 
 # Print usage function.
 printUsage() {
-cat <<EOF
+printf "\
 Usage: $(basename "${0}") [options]
 Options:
   [-d|--debug]
   [-h|--help]
-EOF
+"
 }
 
 # Traps
@@ -61,11 +61,11 @@ done
 
 pushd ${script_path} > /dev/null
 {
-  mkdir --parents ${home}/.config/curate-pkg
-  for pkg_mgr in apt eopkg flatpak npm snap; do
-    if command -v ${pkg_mgr} &> /dev/null; then
-      if [[ ! -f ${home}/.config/curate-pkg/${pkg_mgr}.json ]]; then
-        install ${script_path}/share/empty.json ${home}/.config/curate-pkg/${pkg_mgr}.json
+  mkdir -p ${home}/.config/curate-pkg
+  for package_manager in apt dnf eopkg flatpak go npm pacaur pacman snap yaourt; do
+    if command -v ${package_manager} &> /dev/null; then
+      if [[ ! -f ${home}/.config/curate-pkg/${package_manager}.json ]]; then
+        install ${script_path}/share/empty.json ${home}/.config/curate-pkg/${package_manager}.json
       fi
     fi
   done
@@ -77,7 +77,7 @@ popd > /dev/null
 
 pushd ${script_path} > /dev/null
 {
-  install bin/curate-pkg /usr/local/bin/curate-pkg
+  install bin/* /usr/local/bin
   mkdir --parents /usr/local/share/curate-pkg
   install share/* /usr/local/share/curate-pkg
 }

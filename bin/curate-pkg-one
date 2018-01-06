@@ -1,0 +1,217 @@
+#!/bin/bash
+
+# Copyright (C) 2017 Andrei Pavel, andrei.pavel@cti.pub.ro
+# Licensed under the MIT License
+
+# Fail script if any command fails.
+set -e
+
+# Print usage function.
+printUsage() {
+printf "\
+Usage: $(basename "${0}") \${pakage_manager} [options]
+Options:
+  [-d|--debug]    Enable debug.
+  [-h|--help]     Display this help.
+  [-v|--verbose]  Verbose output
+"
+}
+
+cleanup() {
+  ${cleanup_added_sources}
+  spinner_end ${?} &> /dev/null
+}
+
+# Traps
+# shellcheck disable=SC2154
+trap 'return_code=${?}; trap - EXIT; cleanup; echo EXIT ${return_code}' EXIT
+trap 'return_code=${?}; trap - EXIT; cleanup; echo HUP ${return_code}' HUP
+trap 'return_code=${?}; trap - EXIT; cleanup; echo INT ${return_code}' INT
+trap 'return_code=${?}; trap - EXIT; cleanup; echo QUIT ${return_code}' QUIT
+trap 'return_code=${?}; trap - EXIT; cleanup; echo PIPE ${return_code}' PIPE
+trap 'return_code=${?}; trap - EXIT; cleanup; echo TERM ${return_code}' TERM
+trap 'trap - EXIT; cleanup; echo SIGINT' SIGINT
+trap 'trap - EXIT; cleanup; echo SIGQUIT' SIGQUIT
+
+# Get script path and append it to PATH so other scripts are callable.
+script_path="$(dirname "$(readlink -f "${0}")")"
+PATH="${PATH}:${script_path}"
+
+# Parse arguments.
+package_manager=
+verbose="&> /dev/null"
+while [[ ${#} -ge 1 ]]; do
+  # Debug mode
+  if [[ "${1}" == "-d" || "${1}" == "--debug" ]]; then
+    shift
+    set -x
+    continue
+  fi
+  # Help: display usage
+  if [[ "${1}" == "-h" || "${1}" == "--help" ]]; then
+    shift
+    printUsage
+    exit 0
+  fi
+  if [[ "${1}" == "-v" || "${1}" == "--verbose" ]]; then
+    shift
+    verbose=
+    continue
+  fi
+  # Package manager
+  if [[ -z "${package_manager}" ]]; then
+    package_manager="${1}"
+    shift
+    continue
+  fi
+  # Unrecognized argument.
+  printf "\e[1m\e[31mERROR: Unrecognized argument %s.\e[0m\e[0m\n" "${1}" >&2
+  printUsage
+  exit 1
+done
+
+source "${script_path}/../share/curate-pkg/spinner.sh"
+
+header() {
+  local title=${1}
+  local cols=$(tput cols)
+  local half_cols=$((cols / 2 - 12 ))
+  for (( i=0; i < ${half_cols}; i++ )); do
+    printf "#"
+  done
+  printf " %s " "${title}"
+  for (( i=0; i < ${half_cols}; i++ )); do
+    printf "#"
+  done
+  printf "\n"
+}
+
+spinner_begin() {
+  local message="${1}"
+  if [[ "${-}" != *x* ]]; then
+    start_spinner "${message}"
+  fi
+}
+
+spinner_end() {
+  local message="${1}"
+  if [[ "${-}" != *x* ]]; then
+    stop_spinner "${message}"
+  fi
+}
+
+header ${package_manager}
+source "${script_path}/../share/curate-pkg/${package_manager}.sh"
+if ! command -v jq 1> /dev/null; then
+  ${install} jq
+fi
+# Find out what there is to be done.
+keys=("$(jq -r '.["keys"][]?' < "${config}")")
+repositories=("$(jq -r '.["repositories"][]?' < "${config}")")
+sources=()
+for (( i=0; ; i++ )); do
+  src="$(jq -r '.["sources"]'[${i}] < "${config}")"
+  if [[ ${src} == null ]]; then
+    break
+  fi
+    sources+=( "${src}" )
+done
+installables=("$(jq -r '.["installables"][]?' < "${config}")")
+wgetables=("$(jq -r '.["wgetables"][]?' < "${config}")")
+purgeables=("$(jq -r '.["purgeables"][]?' < "${config}")")
+commands=()
+for (( i=0; ; i++ )); do
+  cmd="$(jq -r '.["commands"]'[${i}] < "${config}")"
+  if [[ ${cmd} == null ]]; then
+    break
+  fi
+    commands+=( "${cmd}" )
+done
+
+# Do.
+spinner_begin "Adding keys..."
+for key in ${keys[@]}; do
+  eval "wget -q -O - \"${key}\" | ${add_key} - ${verbose}"
+done
+spinner_end ${?}
+
+spinner_begin "Adding repositories..."
+for repository in ${repositories[@]}; do
+  eval "${add_repository} \"${repository}\" ${verbose}" || true
+done
+spinner_end ${?}
+
+spinner_begin "Adding sources..."
+eval "${cleanup_added_sources} ${verbose}"
+for src in "${sources[@]}"; do
+  protocolless_src=$(echo "${src}" | cut -d '/' -f 3-)
+  if [[ ! -z ${source_files} ]]; then
+    if ! /bin/grep -F "$(echo "${protocolless_src}")" ${source_files} &> /dev/null; then
+      eval "${add_source} \"${src}\" ${verbose}"
+    fi
+  fi
+done
+spinner_end ${?}
+
+spinner_begin "Updating repositories..."
+eval "${update} ${verbose}" || true
+spinner_end ${?}
+
+spinner_begin "Installing..."
+for package in ${installables[@]}; do
+  set +e
+  eval "${check_package} \"${package}\"" ${verbose}
+  return_code=${?}
+  set -e
+  if [[ ${return_code} -ne 0 ]]; then
+    eval "${install} \"${package}\" ${verbose}" || true
+  fi
+done
+spinner_end ${?}
+
+spinner_begin "wgetting..."
+for wget in ${wgetables[@]}; do
+  name=$(echo ${wget} | cut -d '/' -f 3 | cut -d '.' -f 2)
+  directory="/usr/local/${name}"
+  if [[ ! -d ${directory} ]]; then
+    mkdir --parents ${directory}
+    file=$(mktemp --dry-run --tmpdir=${directory})
+    wget -q -O "${file}" "${wget}"
+    filetype=$(file "${file}")
+    if echo ${filetype} | /bin/grep -Ec "gzip|Zip" &> /dev/null; then
+        pushd ${directory}
+        {
+          eval "unp \"${file}\" ${verbose}"
+        }
+        popd
+    else
+      eval "${manual_install} \"${file}\" ${verbose}"
+    fi
+    rm "${file}"
+  fi
+done
+spinner_end ${?}
+
+spinner_begin "Purging..."
+for package in ${purgeables[@]}; do
+  set +e
+  eval "${check_package} \"${package}\" ${verbose}"
+  return_code=${?}
+  set -e
+  if [[ ${return_code} -eq 0 ]]; then
+    eval "${purge} \"${package}\" ${verbose}"
+  fi
+done
+spinner_end ${?}
+
+spinner_begin "Running custom commands..."
+for cmd in "${commands[@]}"; do
+    eval "${cmd} ${verbose}"
+  done
+spinner_end ${?}
+
+eval "${upgrade} ${verbose}"
+eval "${autoremove} ${verbose}"
+eval "${upgrade_os} ${verbose}" || true
+eval "${cleanup_added_sources} ${verbose}"
+

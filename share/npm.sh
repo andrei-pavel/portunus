@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=""
-config="${home}/.config/curate-pkg/npm.json"
+config="${HOME}/.config/curate-pkg/npm.json"
 check_package="npm list -g"
 add_key=":"
 add_repository=":"
