@@ -70,6 +70,7 @@ done
 
 package_managers=$(cat <<EOF
 apt
+brew
 dnf
 eopkg
 pacman
@@ -79,6 +80,7 @@ EOF
 optional_package_managers=$(cat <<EOF
 flatpak
 go
+nix
 npm
 pacaur
 snap
