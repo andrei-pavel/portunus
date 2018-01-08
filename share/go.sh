@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=""
-config="${HOME}/.config/curate-pkg/go.json"
+config="${HOME}/.config/curate-pkg/go.yaml"
 check_package="go list"
 add_key=":"
 add_repository=":"

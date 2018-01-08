@@ -102,26 +102,26 @@ spinner_end() {
 
 header ${package_manager}
 source "${script_path}/../share/curate-pkg/${package_manager}.sh"
-if ! command -v jq 1> /dev/null; then
-  ${install} jq
+if ! command -v yq 1> /dev/null; then
+  ${install} yq
 fi
 # Find out what there is to be done.
-keys=("$(jq -r '.["keys"][]?' < "${config}")")
-repositories=("$(jq -r '.["repositories"][]?' < "${config}")")
+keys=("$(yq -r '.["keys"][]?' < "${config}")")
+repositories=("$(yq -r '.["repositories"][]?' < "${config}")")
 sources=()
 for (( i=0; ; i++ )); do
-  src="$(jq -r '.["sources"]'[${i}] < "${config}")"
+  src="$(yq -r '.["sources"]'[${i}] < "${config}")"
   if [[ ${src} == null ]]; then
     break
   fi
     sources+=( "${src}" )
 done
-installables=("$(jq -r '.["installables"][]?' < "${config}")")
-wgetables=("$(jq -r '.["wgetables"][]?' < "${config}")")
-purgeables=("$(jq -r '.["purgeables"][]?' < "${config}")")
+installables=("$(yq -r '.["installables"][]?' < "${config}")")
+wgetables=("$(yq -r '.["wgetables"][]?' < "${config}")")
+purgeables=("$(yq -r '.["purgeables"][]?' < "${config}")")
 commands=()
 for (( i=0; ; i++ )); do
-  cmd="$(jq -r '.["commands"]'[${i}] < "${config}")"
+  cmd="$(yq -r '.["commands"]'[${i}] < "${config}")"
   if [[ ${cmd} == null ]]; then
     break
   fi

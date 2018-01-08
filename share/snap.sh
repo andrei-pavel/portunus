@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=""
-config="${HOME}/.config/curate-pkg/snap.json"
+config="${HOME}/.config/curate-pkg/snap.yaml"
 check_package=":"
 add_key=":"
 add_repository=":"

@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=""
-config="${HOME}/.config/curate-pkg/eopkg.json"
+config="${HOME}/.config/curate-pkg/eopkg.yaml"
 check_package="eopkg info " # needs grep 'Installed package'
 add_key=":"
 add_repository="eopkg add-repo -y"

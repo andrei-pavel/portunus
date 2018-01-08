@@ -14,7 +14,7 @@ cd curate-pkg
 
 ## Configuration
 
-After installing, edit `~/.config/curate-pkg/*.json`.
+After installing, edit `~/.config/curate-pkg/*.yaml`.
 
 Samples:
 - `apt`: https://gist.github.com/andrei-pavel/76ba13eb7e3d91367612da7bb0d37319
@@ -27,9 +27,9 @@ Samples:
 
 Simply run `curate-pkg` everyday to keep all your packages up to date.
 
-When installing a new package, add it to `installables`, `wgetables` or `sources` and `keys` in `~/.config/curate-pkg/*.json`.
+When installing a new package, add it to `installables`, `wgetables` or `sources` and `keys` in `~/.config/curate-pkg/*.yaml`.
 
-When removing a package, add it to `purgeables` in `~/.config/curate-pkg/*.json`.
+When removing a package, add it to `purgeables` in `~/.config/curate-pkg/*.yaml`.
 
 `commands` is for any custom package management command that you want to run in addition to installing and purging packages.
 

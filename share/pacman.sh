@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=""
-config="${HOME}/.config/curate-pkg/pacman.json"
+config="${HOME}/.config/curate-pkg/pacman.yaml"
 check_package="pacman -Qi"
 add_key=":"
 add_repository=":"

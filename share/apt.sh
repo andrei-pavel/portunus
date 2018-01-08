@@ -5,7 +5,7 @@
 
 mkdir --parents "/etc/apt/sources.list.d"
 source_files="$(find /etc/apt/sources.list.d -type f)"
-config="${HOME}/.config/curate-pkg/apt.json"
+config="${HOME}/.config/curate-pkg/apt.yaml"
 check_package="dpkg-query -L"
 add_key="apt-key add"
 add_repository="apt-add-repository -y"

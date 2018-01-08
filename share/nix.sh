@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=""
-config="${HOME}/.config/curate-pkg/nix.json"
+config="${HOME}/.config/curate-pkg/nix.yaml"
 check_package="false" # should be: `nix-env -qas {} | grep -E '^I'`, but command needs to be prefix so disable for now
 add_key=":"
 add_repository=":"

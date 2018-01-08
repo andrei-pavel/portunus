@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=
-config="${HOME}/.config/curate-pkg/dnf.json"
+config="${HOME}/.config/curate-pkg/dnf.yaml"
 check_package="false"
 add_key=":"
 add_repository=":"

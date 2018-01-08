@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=""
-config="${HOME}/.config/curate-pkg/brew.json"
+config="${HOME}/.config/curate-pkg/brew.yaml"
 check_package="brew ls --versions"
 add_key=":"
 add_repository=":"
