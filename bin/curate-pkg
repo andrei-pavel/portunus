@@ -26,11 +26,10 @@ trap 'return_code=${?}; trap - EXIT; echo INT ${return_code}' INT
 trap 'return_code=${?}; trap - EXIT; echo QUIT ${return_code}' QUIT
 trap 'return_code=${?}; trap - EXIT; echo PIPE ${return_code}' PIPE
 trap 'return_code=${?}; trap - EXIT; echo TERM ${return_code}' TERM
-trap 'trap - EXIT; echo SIGINT' SIGINT
-trap 'trap - EXIT; echo SIGQUIT' SIGQUIT
+trap 'trap - EXIT; echo QUIT' QUIT
 
 # Get script path and append it to PATH so other scripts are callable.
-script_path="$(dirname "$(readlink -f "${0}")")"
+script_path="$(dirname "${0}")"
 PATH="${PATH}:${script_path}"
 
 # Parse arguments.

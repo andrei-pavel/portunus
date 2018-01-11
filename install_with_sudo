@@ -52,18 +52,12 @@ done
 
 pushd ${script_path} > /dev/null
 {
-  mkdir -p ${HOME}/.config/curate-pkg
-  for package_manager in apt brew dnf eopkg flatpak go nix npm pacaur pacman snap yaourt; do
-    if command -v ${package_manager} &> /dev/null; then
-      if [[ ! -f ${HOME}/.config/curate-pkg/${package_manager}.yaml ]]; then
-        install ${script_path}/share/empty.yaml ${HOME}/.config/curate-pkg/${package_manager}.yaml
-      fi
-    fi
-  done
-
-  # Needs to run as root but keep ${HOME}
-  (( EUID != 0 )) && exec sudo -H ./install_with_sudo
+  install bin/* /usr/local/bin
+  mkdir --parents /usr/local/share/curate-pkg
+  install share/* /usr/local/share/curate-pkg
+  if ! command -v yq &> /dev/null; then
+    pip install share/yq-2.3.4-py2.py3-none-any.whl
+  fi
 }
 popd > /dev/null
-
 

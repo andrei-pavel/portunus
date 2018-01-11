@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2017-2018Andrei Pavel, andrei.pavel@cti.pub.ro
+# Copyright (C) 2017-2018 Andrei Pavel, andrei.pavel@cti.pub.ro
 # Licensed under the MIT License
 
 source_files=""
@@ -14,7 +14,7 @@ install="yaourt -S --force --noconfirm"
 purge="yaourt -R --force --noconfirm"
 update="yaourt -U --force --noconfirm"
 upgrade="yaourt -U --force --noconfirm"
-autoremove=":"
+autoremove="yaourt -Qtd --force --noconfirm"
 upgrade_os=":"
 manual_install="yaourt -Syu --aur --force --noconfirm"
 
