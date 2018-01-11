@@ -6,11 +6,13 @@ All you need to carry your packages with you. Add keys, sources, repositories, i
 
 ## Installation
 
-```
+```sh
 git clone https://github.com/andrei-pavel/curate-pkg.git
 cd curate-pkg
 ./install
 ```
+
+It depends on `yq` for processing of YAML configuration files, but it is installed automatically through `./install`.
 
 ## Configuration
 
