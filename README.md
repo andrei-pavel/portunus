@@ -19,11 +19,16 @@ It depends on `yq` for processing of YAML configuration files, but it is install
 After installing, edit `~/.config/curate-pkg/*.yaml`.
 
 Samples:
-- `apt`: https://gist.github.com/andrei-pavel/76ba13eb7e3d91367612da7bb0d37319
-- `eopkg`: https://gist.github.com/andrei-pavel/c983ba2238f1787436b6beb2d6cebfa2
-- `flatpak`: https://gist.github.com/andrei-pavel/97a9b2b69a96d9d4c82fb3ffb82ccd34
-- `npm`: https://gist.github.com/andrei-pavel/ac275b77cab59a9ce837194bea26fc2c
-- `snap`: https://gist.github.com/andrei-pavel/e0f47f6450bd688d13858de5e0a4560a
+- `apt`: [a relative link](share/samples/apt.yaml)
+- `dnf`: [a relative link](share/samples/dnf.yaml)
+- `eopkg`: [a relative link](share/samples/eopkg.yaml)
+- `flatpak`: [a relative link](share/samples/flatpak.yaml)
+- `go`: [a relative link](share/samples/go.yaml)
+- `npm`: [a relative link](share/samples/npm.yaml)
+- `pacaur`: uses `pacman.yaml`
+- `pacman`: [a relative link](share/samples/pacman.yaml)
+- `snap`: [a relative link](share/samples/snap.yaml)
+- `yaourt`: uses `pacman.yaml`
 
 ## Usage
 
