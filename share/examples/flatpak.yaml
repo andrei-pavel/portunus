@@ -1,0 +1,4 @@
+repositories:
+  - 'flathub https://flathub.org/repo/flathub.flatpakrepo'
+installables:
+  - flathub com.github.JannikHv.Gydl

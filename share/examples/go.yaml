@@ -1,0 +1,8 @@
+purgeables: []
+commands: []
+sources: []
+keys: []
+repositories: []
+wgetables: []
+installables:
+  - github.com/tpng/gopkgs

@@ -1,0 +1,10 @@
+purgeables: []
+commands: []
+sources: []
+keys: []
+repositories: []
+wgetables: []
+installables:
+  - graceful-fs
+  - minimatch
+  - web-terminal
