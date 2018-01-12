@@ -2,7 +2,7 @@ purgeables: []
 commands: []
 sources: []
 keys: []
-repositories:
+repositories: []
 wgetables: []
 installables:
   - alsa-utils
