@@ -38,6 +38,7 @@ installables:
   - openssh
   - pam-face-authentication
   - paprefs
+  - pasystray-gtk3-standalone
   - pkgfile
   - plasma
   - plasma-wayland-session
@@ -46,16 +47,18 @@ installables:
   - rambox
   - ranger
   - redshift
+  - remmina
   - rofi
-  - teamviewer-beta
   - steam
   - synergy
   - system-config-printer
+  - teamviewer-beta
   - termite
   - thunar
   - thunderbird
   - touchegg
   - ttf-inconsolata
+  - turtl
   - unp
   - unzip
   - vicious

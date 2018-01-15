@@ -7,19 +7,25 @@
 set -e
 
 # Print usage function.
-printUsage() {
+function printUsage() {
 printf "\
 Usage: $(basename "${0}") \${pakage_manager} [options]
 Options:
-  [-d|--debug]    Enable debug.
-  [-h|--help]     Display this help.
-  [-v|--verbose]  Verbose output
+  [-d|--debug]                       Enable debug.
+  [-h|--help]                        Display this help.
+  [-v|--verbose]                     Verbose output
+  [-i|--install \$package]            Installs a single package.
+  [-k|--add-key \$key]                Adds a single key.
+  [-p|--purge|--remove \$package]     Removes a single package.
+  [-r|--add-repository \$repository]  Adds a single repository.
+  [-s|--add-source \$source]          Adds a single source.
+  [-u|--upgrade \$package]            Upgrades a single package.
 "
 }
 
-cleanup() {
+function cleanup() {
   ${cleanup_added_sources}
-  spinner_end ${?} &> /dev/null
+  spinner_end 0 &> /dev/null
 }
 
 # Traps
@@ -39,6 +45,13 @@ PATH="${PATH}:${script_path}"
 # Parse arguments.
 package_manager=
 verbose="&> /dev/null"
+add_key_item=
+add_repository_item=
+add_source_item=
+install_item=
+purge_item=
+upgrade_item=
+explicit=false
 while [[ ${#} -ge 1 ]]; do
   # Debug mode
   if [[ "${1}" == "-d" || "${1}" == "--debug" ]]; then
@@ -51,6 +64,54 @@ while [[ ${#} -ge 1 ]]; do
     shift
     printUsage
     exit 0
+  fi
+  # install
+  if [[ "${1}" == "-i" || "${1}" == "--install" ]]; then
+    shift
+    install_item=${1}
+    explicit=true
+    shift
+    continue
+  fi
+  # add-key
+  if [[ "${1}" == "-k" || "${1}" == "--add-key" ]]; then
+    shift
+    add_key_item=${1}
+    explicit=true
+    shift
+    continue
+  fi
+  # purge
+  if [[ "${1}" == "-p" || "${1}" == "--purge" || "${1}" == "--remove" ]]; then
+    shift
+    purge_item=${1}
+    explicit=true
+    shift
+    continue
+  fi
+  # add-repository
+  if [[ "${1}" == "-r" || "${1}" == "--add-repository" ]]; then
+    shift
+    add_repository_item=${1}
+    explicit=true
+    shift
+    continue
+  fi
+  # add-source
+  if [[ "${1}" == "-s" || "${1}" == "--add-source" ]]; then
+    shift
+    add_source_item=${1}
+    explicit=true
+    shift
+    continue
+  fi
+  # upgrade
+  if [[ "${1}" == "-u" || "${1}" == "--upgrade" ]]; then
+    shift
+    upgrade_item=${1}
+    explicit=true
+    shift
+    continue
   fi
   if [[ "${1}" == "-v" || "${1}" == "--verbose" ]]; then
     shift
@@ -71,7 +132,7 @@ done
 
 source "${script_path}/../share/curate-pkg/spinner.sh"
 
-header() {
+function header() {
   local title=${1}
   local cols=$(tput cols)
   local half_cols=$((cols / 2 - 12 ))
@@ -85,18 +146,47 @@ header() {
   printf "\n"
 }
 
-spinner_begin() {
+function spinner_begin() {
   local message="${1}"
   if [[ "${-}" != *x* ]]; then
     start_spinner "${message}"
   fi
 }
 
-spinner_end() {
-  local message="${1}"
+function spinner_end() {
   if [[ "${-}" != *x* ]]; then
-    stop_spinner "${message}"
+    stop_spinner 0
   fi
+}
+
+function install_function() {
+  local package="${1}"
+  eval "${install} \"${package}\" ${verbose}" || true
+}
+
+function add_key_function() {
+  local key="${1}"
+  eval "wget -q -O - \"${key}\" | ${add_key} - ${verbose}"
+}
+
+function purge_function() {
+  local package="${1}"
+  eval "${purge} \"${package}\" ${verbose}"
+}
+
+function add_repository_function() {
+  local repository="${1}"
+  eval "${add_repository} \"${repository}\" ${verbose}" || true
+}
+
+function add_source_function() {
+  local source="${1}"
+  eval "${add_source} \"${src}\" ${verbose}"
+}
+
+function upgrade_function() {
+  local package="${1}"
+  eval "${upgrade} ${package} ${verbose}"
 }
 
 header ${package_manager}
@@ -104,112 +194,159 @@ source "${script_path}/../share/curate-pkg/${package_manager}.sh"
 if ! command -v yq 1> /dev/null; then
   ${install} yq
 fi
-# Find out what there is to be done.
-keys=("$(yq -r '.["keys"][]?' < "${config}")")
-repositories=("$(yq -r '.["repositories"][]?' < "${config}")")
-sources=()
-for (( i=0; ; i++ )); do
-  src="$(yq -r '.["sources"]'[${i}] < "${config}")"
-  if [[ ${src} == null ]]; then
-    break
-  fi
-    sources+=( "${src}" )
-done
-installables=("$(yq -r '.["installables"][]?' < "${config}")")
-wgetables=("$(yq -r '.["wgetables"][]?' < "${config}")")
-purgeables=("$(yq -r '.["purgeables"][]?' < "${config}")")
-commands=()
-for (( i=0; ; i++ )); do
-  cmd="$(yq -r '.["commands"]'[${i}] < "${config}")"
-  if [[ ${cmd} == null ]]; then
-    break
-  fi
-    commands+=( "${cmd}" )
-done
+
+if ! ${explicit}; then
+  # Find out what there is to be done.
+  keys=("$(yq -r '.["keys"][]?' < "${config}")")
+  repositories=("$(yq -r '.["repositories"][]?' < "${config}")")
+  sources=()
+  for (( i=0; ; i++ )); do
+    src="$(yq -r '.["sources"]'[${i}] < "${config}")"
+    if [[ ${src} == null ]]; then
+      break
+    fi
+      sources+=( "${src}" )
+  done
+  installables=("$(yq -r '.["installables"][]?' < "${config}")")
+  wgetables=("$(yq -r '.["wgetables"][]?' < "${config}")")
+  purgeables=("$(yq -r '.["purgeables"][]?' < "${config}")")
+  commands=()
+  for (( i=0; ; i++ )); do
+    cmd="$(yq -r '.["commands"]'[${i}] < "${config}")"
+    if [[ ${cmd} == null ]]; then
+      break
+    fi
+      commands+=( "${cmd}" )
+  done
+fi
 
 # Do.
 spinner_begin "Adding keys..."
-for key in ${keys[@]}; do
-  eval "wget -q -O - \"${key}\" | ${add_key} - ${verbose}"
-done
-spinner_end ${?}
+if ${explicit}; then
+  if [[ ! -z ${add_key_item} ]]; then
+    add_key_function "${add_key_item}"
+  fi
+else
+  for key in ${keys[@]}; do
+    add_key_function "${key}"
+  done
+fi
+spinner_end
 
 spinner_begin "Adding repositories..."
-for repository in ${repositories[@]}; do
-  eval "${add_repository} \"${repository}\" ${verbose}" || true
-done
-spinner_end ${?}
+if ! ${explicit}; then
+  if [[ ! -z ${add_repository_item} ]]; then
+    add_repository_function "${add_repository_item}"
+  fi
+else
+  for repository in ${repositories[@]}; do
+    add_repository_function "${repository}"
+  done
+fi
+spinner_end
 
 spinner_begin "Adding sources..."
 eval "${cleanup_added_sources} ${verbose}"
-for src in "${sources[@]}"; do
-  protocolless_src=$(echo "${src}" | cut -d '/' -f 3-)
-  if [[ ! -z ${source_files} ]]; then
-    if ! /bin/grep -F "$(echo "${protocolless_src}")" ${source_files} &> /dev/null; then
-      eval "${add_source} \"${src}\" ${verbose}"
-    fi
+if ${explicit}; then
+  if [[ ! -z ${add_source_item} ]]; then
+    add_source_function "${add_source_item}"
   fi
-done
-spinner_end ${?}
+else
+  for src in "${sources[@]}"; do
+    protocolless_src=$(echo "${src}" | cut -d '/' -f 3-)
+    if [[ ! -z ${source_files} ]]; then
+      if ! /bin/grep -F "$(echo "${protocolless_src}")" ${source_files} &> /dev/null; then
+        add_source_function "${source}"
+      fi
+    fi
+  done
+fi
+spinner_end
 
 spinner_begin "Updating repositories..."
 eval "${update} ${verbose}" || true
-spinner_end ${?}
+spinner_end
 
 spinner_begin "Installing..."
-for package in ${installables[@]}; do
-  set +e
-  eval "${check_package} \"${package}\"" ${verbose}
-  return_code=${?}
-  set -e
-  if [[ ${return_code} -ne 0 ]]; then
-    eval "${install} \"${package}\" ${verbose}" || true
+if ${explicit}; then
+  if [[ ! -z ${install_item} ]]; then
+    install_function ${install_item}
   fi
-done
-spinner_end ${?}
-
-spinner_begin "wgetting..."
-for wget in ${wgetables[@]}; do
-  name=$(echo ${wget} | cut -d '/' -f 3 | cut -d '.' -f 2)
-  directory="/usr/local/${name}"
-  if [[ ! -d ${directory} ]]; then
-    mkdir --parents ${directory}
-    file=$(mktemp --dry-run --tmpdir=${directory})
-    wget -q -O "${file}" "${wget}"
-    filetype=$(file "${file}")
-    if echo ${filetype} | /bin/grep -Ec "gzip|Zip" &> /dev/null; then
-        pushd ${directory}
-        {
-          eval "unp \"${file}\" ${verbose}"
-        }
-        popd
-    else
-      eval "${manual_install} \"${file}\" ${verbose}"
+else
+  for package in ${installables[@]}; do
+    set +e
+    eval "${check_package} \"${package}\"" ${verbose}
+    return_code=${?}
+    set -e
+    if [[ ${return_code} -ne 0 ]]; then
+      ${install_function} "${package}"
     fi
-    rm "${file}"
-  fi
-done
-spinner_end ${?}
+  done
+fi
+spinner_end
+
+if ! ${explicit}; then
+  spinner_begin "wgetting..."
+  for wget in ${wgetables[@]}; do
+    name=$(echo ${wget} | cut -d '/' -f 3 | cut -d '.' -f 2)
+    directory="/usr/local/${name}"
+    if [[ ! -d ${directory} ]]; then
+      mkdir --parents ${directory}
+      file=$(mktemp --dry-run --tmpdir=${directory})
+      wget -q -O "${file}" "${wget}"
+      filetype=$(file "${file}")
+      if echo ${filetype} | /bin/grep -Ec "gzip|Zip" &> /dev/null; then
+          pushd ${directory}
+          {
+            eval "unp \"${file}\" ${verbose}"
+          }
+          popd
+      else
+        eval "${manual_install} \"${file}\" ${verbose}"
+      fi
+      rm "${file}"
+    fi
+  done
+  spinner_end
+fi
 
 spinner_begin "Purging..."
-for package in ${purgeables[@]}; do
-  set +e
-  eval "${check_package} \"${package}\" ${verbose}"
-  return_code=${?}
-  set -e
-  if [[ ${return_code} -eq 0 ]]; then
-    eval "${purge} \"${package}\" ${verbose}"
+if ${explicit}; then
+  if [[ ! -z ${purge_item} ]]; then
+    purge_function "${purge_item}"
   fi
-done
-spinner_end ${?}
+else
+  for package in ${purgeables[@]}; do
+    set +e
+    eval "${check_package} \"${package}\" ${verbose}"
+    return_code=${?}
+    set -e
+    if [[ ${return_code} -eq 0 ]]; then
+      purge_function
 
+    fi
+  done
+fi
+spinner_end
+
+if ! ${explicit}; then
 spinner_begin "Running custom commands..."
 for cmd in "${commands[@]}"; do
     eval "${cmd} ${verbose}"
   done
-spinner_end ${?}
+spinner_end
+fi
 
-eval "${upgrade} ${verbose}"
+spinner_begin "Upgrading..."
+if ${explicit}; then
+  if [[ ! -z ${upgrade_item} ]]; then
+    upgrade_function ${upgrade_item}
+  fi
+else
+  upgrade_function
+fi
+spinner_end
+
 eval "${autoremove} ${verbose}"
 eval "${upgrade_os} ${verbose}" || true
 eval "${cleanup_added_sources} ${verbose}"
