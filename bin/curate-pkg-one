@@ -351,7 +351,13 @@ else
 fi
 spinner_end
 
+spinner_begin "Removing unused packages..."
 eval "autoremove_ ${verbose}"
+spinner_end
+
+spinner_begin "Upgrading operating system..."
 eval "upgrade_os_ ${verbose}" || true
+spinner_end
+
 eval "cleanup_added_sources_ ${verbose}"
 
