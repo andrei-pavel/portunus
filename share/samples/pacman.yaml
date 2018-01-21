@@ -10,10 +10,14 @@ installables:
   - awesome
   - bc
   - blueman
+  - bluez
+  - bluez-tools
   - bluez-utils
   - colordiff
   - compton
   - code
+  - create_ap
+  - deadbeef
   - dialog
   - docker
   - dropbox
@@ -30,12 +34,14 @@ installables:
   - krita
   - mesa
   - mlocate
+  - most
   - mpc
   - mpd
   - ncmpcpp
   - neovim
   - network-manager-applet
   - openssh
+  - postman-bin
   - pam-face-authentication
   - paprefs
   - pasystray-gtk3-standalone
@@ -44,12 +50,15 @@ installables:
   - plasma-wayland-session
   - pulseaudio
   - pulsemixer
+  - pup-git
   - rambox
   - ranger
   - redshift
   - remmina
+  - ripgrep
   - rofi
   - steam
+  - strace
   - synergy
   - system-config-printer
   - teamviewer-beta

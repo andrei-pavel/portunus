@@ -133,14 +133,18 @@ done
 source "${script_path}/../share/curate-pkg/spinner.sh"
 
 function header() {
-  local title=${1}
-  local cols=$(tput cols)
-  local half_cols=$((cols / 2 - 12 ))
-  for (( i=0; i < ${half_cols}; i++ )); do
+  local title="${1}"
+  local column_count="$(tput cols)"
+  local hash_count=$((column_count - 2 - ${#title}))
+  local one_side_column_count="$((hash_count / 2))"
+  for (( i=0; i < "${one_side_column_count}"; i++ )); do
     printf "#"
   done
   printf " %s " "${title}"
-  for (( i=0; i < ${half_cols}; i++ )); do
+  if [[ $((hash_count % 2)) -eq 1 ]]; then
+    one_side_column_count=$((one_side_column_count + 1))
+  fi
+  for (( i=0; i < "${one_side_column_count}"; i++ )); do
     printf "#"
   done
   printf "\n"
@@ -161,36 +165,36 @@ function spinner_end() {
 
 function install_function() {
   local package="${1}"
-  eval "${install} \"${package}\" ${verbose}" || true
+  eval "install_ \"${package}\" ${verbose}" || true
 }
 
 function add_key_function() {
   local key="${1}"
-  eval "wget -q -O - \"${key}\" | ${add_key} - ${verbose}"
+  eval "wget -q -O - \"${key}\" | add_key_ - ${verbose}"
 }
 
 function purge_function() {
   local package="${1}"
-  eval "${purge} \"${package}\" ${verbose}"
+  eval "purge_ \"${package}\" ${verbose}"
 }
 
 function add_repository_function() {
   local repository="${1}"
-  eval "${add_repository} \"${repository}\" ${verbose}" || true
+  eval "add_repository_ \"${repository}\" ${verbose}" || true
 }
 
 function add_source_function() {
   local source="${1}"
-  eval "${add_source} \"${src}\" ${verbose}"
+  eval "add_source_ \"${src}\" ${verbose}"
 }
 
 function upgrade_function() {
   local package="${1}"
-  eval "${upgrade} ${package} ${verbose}"
+  eval "upgrade_ ${package} ${verbose}"
 }
 
 header ${package_manager}
-source "${script_path}/../share/curate-pkg/${package_manager}.sh"
+source "${script_path}/../share/curate-pkg/package-managers/${package_manager}.sh"
 if ! command -v yq 1> /dev/null; then
   ${install} yq
 fi
@@ -246,7 +250,7 @@ fi
 spinner_end
 
 spinner_begin "Adding sources..."
-eval "${cleanup_added_sources} ${verbose}"
+eval "cleanup_added_sources_ ${verbose}"
 if ${explicit}; then
   if [[ ! -z ${add_source_item} ]]; then
     add_source_function "${add_source_item}"
@@ -264,7 +268,7 @@ fi
 spinner_end
 
 spinner_begin "Updating repositories..."
-eval "${update} ${verbose}" || true
+eval "update_ ${verbose}" || true
 spinner_end
 
 spinner_begin "Installing..."
@@ -275,11 +279,11 @@ if ${explicit}; then
 else
   for package in ${installables[@]}; do
     set +e
-    eval "${check_package} \"${package}\"" ${verbose}
+    eval "check_package_ \"${package}\"" ${verbose}
     return_code=${?}
     set -e
     if [[ ${return_code} -ne 0 ]]; then
-      ${install_function} "${package}"
+      install_function "${package}"
     fi
   done
 fi
@@ -302,7 +306,7 @@ if ! ${explicit}; then
           }
           popd
       else
-        eval "${manual_install} \"${file}\" ${verbose}"
+        eval "manual_install_ \"${file}\" ${verbose}"
       fi
       rm "${file}"
     fi
@@ -318,7 +322,7 @@ if ${explicit}; then
 else
   for package in ${purgeables[@]}; do
     set +e
-    eval "${check_package} \"${package}\" ${verbose}"
+    eval "check_package_ \"${package}\" ${verbose}"
     return_code=${?}
     set -e
     if [[ ${return_code} -eq 0 ]]; then
@@ -347,7 +351,7 @@ else
 fi
 spinner_end
 
-eval "${autoremove} ${verbose}"
-eval "${upgrade_os} ${verbose}" || true
-eval "${cleanup_added_sources} ${verbose}"
+eval "autoremove_ ${verbose}"
+eval "upgrade_os_ ${verbose}" || true
+eval "cleanup_added_sources_ ${verbose}"
 

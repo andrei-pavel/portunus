@@ -56,7 +56,7 @@ pushd ${script_path} > /dev/null
   install bin/* /usr/local/bin
   mkdir -p /usr/local/share/curate-pkg/samples
   install share/samples/* /usr/local/share/curate-pkg/samples
-  install share/*.sh /usr/local/share/curate-pkg
+  install share/package-managers/*.sh /usr/local/share/curate-pkg
   install share/*.yaml /usr/local/share/curate-pkg
   if ! command -v yq &> /dev/null; then
     pip install share/yq-2.3.4-py2.py3-none-any.whl
