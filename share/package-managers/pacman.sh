@@ -40,7 +40,7 @@ function install_() {
 
 function purge_() {
   local package="${1}"
-  pacman -Rsc --force --noconfirm "${package}"
+  pacman -Rsc --noconfirm "${package}"
   return "${?}"
 }
 
@@ -61,7 +61,7 @@ function upgrade_() {
 }
 
 function autoremove_() {
-  true
+  pacman -Qtd | cut -d ' ' -f 1 | xargs pacman -Rsc --noconfirm
   return "${?}"
 }
 

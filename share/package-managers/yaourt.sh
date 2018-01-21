@@ -43,7 +43,7 @@ function install_() {
 
 function purge_() {
   local package="${1}"
-  yaourt -Rsc --force --noconfirm "${package}"
+  yaourt -Rsc --noconfirm "${package}"
   return "${?}"
 }
 
@@ -64,7 +64,7 @@ function upgrade_() {
 }
 
 function autoremove_() {
-  yaourt -Qtd --force --noconfirm
+  yaourt -Qtd | cut -d ' ' -f 1 | xargs yaourt -Rsc --noconfirm
   return "${?}"
 }
 
