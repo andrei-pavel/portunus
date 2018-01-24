@@ -64,7 +64,7 @@ function upgrade_() {
 }
 
 function autoremove_() {
-  yaourt -Qtd | cut -d ' ' -f 1 | xargs yaourt -Rsc --noconfirm
+  yaourt -Qtd --noconfirm 2>&1 | cut -d ' ' -f 1 | cut -d '/' -f 2 | head -n -3 | xargs yaourt -Rsc --noconfirm
   return "${?}"
 }
 
