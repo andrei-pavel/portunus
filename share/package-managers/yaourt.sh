@@ -37,7 +37,7 @@ function cleanup_added_sources_() {
 
 function install_() {
   local package="${1}"
-  yaourt -S --force --needed --noconfirm "${package}"
+  yaourt -S --aur --force --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,13 +48,13 @@ function purge_() {
 }
 
 function update_() {
-  yaourt -U --force --needed --noconfirm
+  yaourt -U --aur --force --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_() {
   if [[ ${#} -eq 0 ]]; then
-    yaourt -Su --force --needed --noconfirm
+    yaourt -Su --aur --force --needed --noconfirm
     return "${?}"
   fi
 
@@ -64,7 +64,10 @@ function upgrade_() {
 }
 
 function autoremove_() {
-  yaourt -Qtd --noconfirm 2>&1 | cut -d ' ' -f 1 | cut -d '/' -f 2 | head -n -3 | xargs yaourt -Rsc --noconfirm
+  to_be_removed=$(yaourt -Qtd --aur --noconfirm 2>&1 | cut -d ' ' -f 1 | cut -d '/' -f 2 | head -n -3)
+  if [[ ! -z ${to_be_removed} ]]; then
+    echo "${to_be_removed}" | xargs yaourt -Rsc --noconfirm
+  fi
   return "${?}"
 }
 

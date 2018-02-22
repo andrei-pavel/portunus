@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 # Fail script if any command fails.
-set -e
+set -eu
 
 # Print usage function.
 function printUsage() {

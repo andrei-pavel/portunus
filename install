@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 # Fail script if any command fails.
-set -e
+set -eu
 
 # Print usage function.
 printUsage() {
@@ -53,7 +53,7 @@ done
 pushd ${script_path} > /dev/null
 {
   mkdir -p ${HOME}/.config/curate-pkg
-  for package_manager in apt brew dnf eopkg flatpak go nix npm pacaur pacman snap yaourt; do
+  for package_manager in apt brew dnf eopkg flatpak go nix npm pacman snap; do
     if command -v ${package_manager} &> /dev/null; then
       if [[ ! -f ${HOME}/.config/curate-pkg/${package_manager}.yaml ]]; then
         install ${script_path}/share/empty.yaml ${HOME}/.config/curate-pkg/${package_manager}.yaml
