@@ -37,7 +37,7 @@ function cleanup_added_sources_() {
 
 function install_() {
   local package="${1}"
-  yaourt -S --aur --force --needed --noconfirm "${package}"
+  yaourt -Syy --aur --force --needed --noconfirm "${package}"
   return "${?}"
 }
 

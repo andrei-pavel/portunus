@@ -34,7 +34,7 @@ function cleanup_added_sources_() {
 
 function install_() {
   local package="${1}"
-  pacman -S --force --needed --noconfirm "${package}"
+  pacman -Syy --force --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -45,7 +45,7 @@ function purge_() {
 }
 
 function update_() {
-  pacman -Syu --force --needed --noconfirm
+  pacman -Sy --force --needed --noconfirm
   return "${?}"
 }
 

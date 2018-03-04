@@ -3,60 +3,34 @@
 # Copyright (C) 2017-2018 Andrei Pavel, andrei.pavel@cti.pub.ro
 # Licensed under the MIT License
 
-# Fail script if any command fails.
-set -eu
-
-# Print usage function.
-printUsage() {
-printf "\
-Usage: $(basename "${0}") [options]
-Options:
-  [-d|--debug]
-  [-h|--help]
-"
-}
-
-# Traps
-# shellcheck disable=SC2154
-trap 'return_code=${?}; trap - EXIT; echo EXIT ${return_code}' EXIT
-trap 'return_code=${?}; trap - EXIT; echo HUP ${return_code}' HUP
-trap 'return_code=${?}; trap - EXIT; echo INT ${return_code}' INT
-trap 'return_code=${?}; trap - EXIT; echo QUIT ${return_code}' QUIT
-trap 'return_code=${?}; trap - EXIT; echo PIPE ${return_code}' PIPE
-trap 'return_code=${?}; trap - EXIT; echo TERM ${return_code}' TERM
-trap 'trap - EXIT; echo QUIT' QUIT
-
 # Get script path and append it to PATH so other scripts are callable.
-script_path="$(dirname "${0}")"
-PATH="${PATH}:${script_path}"
+SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
+PATH="${PATH}:${SCRIPT_PATH}"
+
+# Header
+ARGUMENTS="\
+"
+. "${SCRIPT_PATH}/share/header"
 
 # Parse arguments.
-while [[ ${#} -ge 1 ]]; do
-  # Debug mode
-  if [[ "${1}" == "-d" || "${1}" == "--debug" ]]; then
-    shift
-    set -x
-    continue
-  fi
-  # Help: display usage
-  if [[ "${1}" == "-h" || "${1}" == "--help" ]]; then
-    shift
-    printUsage
-    exit 0
-  fi
-  # Unrecognized argument.
-  printf "\e[1m\e[31mERROR: Unrecognized argument %s.\e[0m\e[0m\n" "${1}" >&2
-  printUsage
-  exit 1
+while (( ${#} > 0 )); do
+  case "${1}" in
+  *)
+    # Unrecognized argument
+    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; printUsage; exit 1;;
+  esac; shift
 done
 
-pushd ${script_path} > /dev/null
+#------------------------------------------------------------------------------#
+
+pushd "${SCRIPT_PATH}" 1> /dev/null
 {
   mkdir -p /usr/local/bin
   install bin/* /usr/local/bin
   mkdir -p /usr/local/share/curate-pkg/samples
   mkdir -p /usr/local/share/curate-pkg/package-managers
-  install share/spinner.sh /usr/local/share/curate-pkg
+  install share/header /usr/local/share/curate-pkg
+  install share/spinner /usr/local/share/curate-pkg
   install share/*.yaml /usr/local/share/curate-pkg
   install share/package-managers/*.sh /usr/local/share/curate-pkg/package-managers
   install share/samples/* /usr/local/share/curate-pkg/samples
@@ -64,5 +38,4 @@ pushd ${script_path} > /dev/null
     pip install share/yq-2.3.4-py2.py3-none-any.whl
   fi
 }
-popd > /dev/null
-
+popd 1> /dev/null

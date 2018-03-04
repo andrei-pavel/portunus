@@ -3,16 +3,12 @@
 # Copyright (C) 2017-2018 Andrei Pavel, andrei.pavel@cti.pub.ro
 # Licensed under the MIT License
 
-# Fail script if any command fails.
-set -eu
+# Get script path and append it to PATH so other scripts are callable.
+SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
+PATH="${PATH}:${SCRIPT_PATH}"
 
-# Print usage function.
-function printUsage() {
-printf "\
-Usage: $(basename "${0}") [options]
-Options:
-  [-d|--debug]                       Enable debug.
-  [-h|--help]                        Display this help.
+# Header
+ARGUMENTS="\
   [-a|--auto]                        Cool continuous curation
   [-v|--verbose]                     Verbose output
   [-i|--install \$package]            Installs a single package.
@@ -21,99 +17,42 @@ Options:
   [-r|--add-repository \$repository]  Adds a single repository.
   [-s|--add-source \$source]          Adds a single source.
   [-u|--upgrade \$package]            Upgrades a single package.
+  \$package_manager                   Run only for this specific package manager.
 "
-}
-
-# Traps
-# shellcheck disable=SC2154
-trap 'return_code=${?}; trap - EXIT; echo EXIT ${return_code}' EXIT
-trap 'return_code=${?}; trap - EXIT; echo HUP ${return_code}' HUP
-trap 'return_code=${?}; trap - EXIT; echo INT ${return_code}' INT
-trap 'return_code=${?}; trap - EXIT; echo QUIT ${return_code}' QUIT
-trap 'return_code=${?}; trap - EXIT; echo PIPE ${return_code}' PIPE
-trap 'return_code=${?}; trap - EXIT; echo TERM ${return_code}' TERM
-trap 'trap - EXIT; echo QUIT' QUIT
-
-# Get script path and append it to PATH so other scripts are callable.
-script_path="$(dirname "${0}")"
-PATH="${PATH}:${script_path}"
+. "${SCRIPT_PATH}/../share/curate-pkg/header"
+. "${SCRIPT_PATH}/../share/curate-pkg/spinner"
 
 # Parse arguments.
 additional=
 auto=false
-while [[ ${#} -ge 1 ]]; do
-  # Debug mode
-  if [[ "${1}" == "-d" || "${1}" == "--debug" ]]; then
-    shift
-    set -x
-    additional+=" -d"
-    continue
-  fi
-  # Help: display usage
-  if [[ "${1}" == "-h" || "${1}" == "--help" ]]; then
-    shift
-    printUsage
-    exit 0
-  fi
-  # auto
-  if [[ "${1}" == "-a" || "${1}" == "--auto" ]]; then
-    shift
-    auto=true
-    continue
-  fi
-  # install
-  if [[ "${1}" == "-i" || "${1}" == "--install" ]]; then
-    shift
-    additional+=" -i ${1}"
-    shift
-    continue
-  fi
-  # add-key
-  if [[ "${1}" == "-k" || "${1}" == "--add-key" ]]; then
-    shift
-    additional+=" -k ${1}"
-    shift
-    continue
-  fi
-  # purge
-  if [[ "${1}" == "-p" || "${1}" == "--purge" || "${1}" == "--remove" ]]; then
-    shift
-    additional+=" -p ${1}"
-    shift
-    continue
-  fi
-  # add-repository
-  if [[ "${1}" == "-r" || "${1}" == "--add-repository" ]]; then
-    shift
-    additional+=" -r ${1}"
-    shift
-    continue
-  fi
-  # add-source
-  if [[ "${1}" == "-s" || "${1}" == "--add-source" ]]; then
-    shift
-    additional+=" -s ${1}"
-    shift
-    continue
-  fi
-  # update
-  if [[ "${1}" == "-u" || "${1}" == "--upgrade" ]]; then
-    shift
-    additional+=" -u ${1}"
-    shift
-    continue
-  fi
-  # Verbose output
-  if [[ "${1}" == "-v" || "${1}" == "--verbose" ]]; then
-    shift
-    additional+=" -v"
-    continue
-  fi
-  # Unrecognized argument.
-  printf "\e[1m\e[31mERROR: Unrecognized argument %s.\e[0m\e[0m\n" "${1}" >&2
-  printUsage
-  exit 1
+while (( ${#} > 0 )); do
+  case "${1}" in
+  # [-a|--auto]                        Cool continuous curation
+  '-a');& '--auto') auto=true;;
+  # [-i|--install \$package]            Installs a single package.
+  '-i');& '--install');&
+  # [-k|--add-key \$key]                Adds a single key.
+  '-k');& '--add-key');&
+  # [-p|--purge|--remove \$package]     Removes a single package.
+  '-p');& '--purge');& '--remove');&
+  # [-r|--add-repository \$repository]  Adds a single repository.
+  '-r');& '--add-repository');&
+  # [-s|--add-source \$source]          Adds a single source.
+  '-s');& '--add-source');&
+  # [-u|--upgrade \$package]            Upgrades a single package.
+  '-u');& '--upgrade')
+    additional+=" ${1} ${2}" && shift;;
+  # [-v|--verbose]                     Verbose output
+  '-v');& '--verbose') additional+=" ${1}";;
+  *)
+    # \$package_manager                   Run only for this specific package manager.
+    [[ -z "${explicit_package_manager}" ]] && explicit_package_manager="${1}" && shift && continue
+    # Unrecognized argument
+    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; printUsage; exit 1;;
+  esac; shift
 done
+
+#------------------------------------------------------------------------------#
 
 package_managers=$(cat <<EOF
 apt
@@ -135,25 +74,12 @@ yaourt
 EOF
 )
 
-found=false
-for package_manager in ${package_managers}; do
-  if command -v ${package_manager} 1> /dev/null; then
-    found=true
-    break
-  fi
-done
-
-if ! ${found}; then
-  printf "Warning: your package manager is not supported. Send the following output to the developer:\n%s\n" "$(lsb_release -a 2> /dev/null)" >&2
-  exit 2
-fi
-
-# shellcheck disable=SC2068
 while true; do
   for package_manager in ${package_managers} ${optional_package_managers}; do
-    if ! command -v ${package_manager} 1> /dev/null; then
+    if ! command -v ${package_manager} 1> /dev/null || [[ ! -z "${explicit_package_manager}" && "${package_manager}" != "${explicit_package_manager}" ]]; then
       continue
     fi
+    found=true
     if [[ ${package_manager} == "pacaur" ||
           ${package_manager} == "yaourt" ]]; then
       curate-pkg-one ${additional} ${package_manager} || true
@@ -167,3 +93,7 @@ while true; do
   sleep 1h
 done
 
+if ! ${found}; then
+  printf "Warning: your package manager is not supported. Send the following output to the developer:\n%s\n" "$(lsb_release -a 2> /dev/null)" >&2
+  exit 2
+fi
