@@ -28,27 +28,27 @@ auto=false
 while (( ${#} > 0 )); do
   case "${1}" in
   # [-a|--auto]                        Cool continuous curation
-  '-a');& '--auto') auto=true;;
+  '-a'|'--auto') auto=true ;;
   # [-i|--install \$package]            Installs a single package.
-  '-i');& '--install');&
+  '-i'|'--install');&
   # [-k|--add-key \$key]                Adds a single key.
-  '-k');& '--add-key');&
+  '-k'|'--add-key');&
   # [-p|--purge|--remove \$package]     Removes a single package.
-  '-p');& '--purge');& '--remove');&
+  '-p'|'--purge'|'--remove');&
   # [-r|--add-repository \$repository]  Adds a single repository.
-  '-r');& '--add-repository');&
+  '-r'|'--add-repository');&
   # [-s|--add-source \$source]          Adds a single source.
-  '-s');& '--add-source');&
+  '-s'|'--add-source');&
   # [-u|--upgrade \$package]            Upgrades a single package.
-  '-u');& '--upgrade')
-    additional+=" ${1} ${2}" && shift;;
+  '-u'|'--upgrade')
+    additional+=" ${1} ${2}" && shift ;;
   # [-v|--verbose]                     Verbose output
-  '-v');& '--verbose') additional+=" ${1}";;
+  '-v'|'--verbose') additional+=" ${1}" ;;
   *)
     # \$package_manager                   Run only for this specific package manager.
     [[ -z "${explicit_package_manager}" ]] && explicit_package_manager="${1}" && shift && continue
     # Unrecognized argument
-    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; printUsage; exit 1;;
+    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; printUsage; exit 1 ;;
   esac; shift
 done
 

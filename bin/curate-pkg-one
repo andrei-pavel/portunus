@@ -34,24 +34,24 @@ explicit=false
 while (( ${#} > 0 )); do
   case "${1}" in
   # [-i|--install \$package]            Installs a single package.
-  '-i');& '--install') shift && install_item="${1}" && explicit=true;;
+  '-i'|'--install') shift && install_item="${1}" && explicit=true ;;
   # [-k|--add-key \$key]                Adds a single key.
-  '-k');& '--add-key') shift && add_key_item="${1}" && explicit=true;;
+  '-k'|'--add-key') shift && add_key_item="${1}" && explicit=true ;;
   # [-p|--purge|--remove \$package]     Removes a single package.
-  '-p');& '--purge');& '--remove') shift && purge_item="${1}" && explicit=true;;
+  '-p'|'--purge'|'--remove') shift && purge_item="${1}" && explicit=true ;;
   # [-r|--add-repository \$repository]  Adds a single repository.
-  '-r');& '--add-repository') shift && add_repository_item="${1}" && explicit=true;;
+  '-r'|'--add-repository') shift && add_repository_item="${1}" && explicit=true ;;
   # [-s|--add-source \$source]          Adds a single source.
-  '-s');& '--add-source') shift && add_source_item="${1}" && explicit=true;;
+  '-s'|'--add-source') shift && add_source_item="${1}" && explicit=true ;;
   # [-u|--upgrade \$package]            Upgrades a single package.
-  '-u');& '--upgrade') shift && upgrade_item="${1}" && explicit=true;;
+  '-u'|'--upgrade') shift && upgrade_item="${1}" && explicit=true ;;
   # [-v|--verbose]                     Verbose output
-  '-v');& '--verbose') shift && verbose='' && explicit=true;;
+  '-v'|'--verbose') shift && verbose='' && explicit=true ;;
   *)
     # \$package_manager                   Run only for this specific package manager.
     [[ -z "${package_manager}" ]] && package_manager="${1}" && shift && continue
     # Unrecognized argument
-    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; printUsage; exit 1;;
+    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; printUsage; exit 1 ;;
   esac; shift
 done
 
