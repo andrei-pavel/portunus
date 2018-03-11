@@ -1,6 +1,6 @@
 # curate-pkg
 
-a pair of scripts that keeps a consistent image of installed packages across **ALL** package managers
+that script you craved for to keep a consistent image of installed packages across **ALL** package managers
 
 
 ## Table of Contents
