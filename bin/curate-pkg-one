@@ -16,6 +16,7 @@ ARGUMENTS="\
   [-s|--add-source \$source]          Adds a single source.
   [-u|--upgrade \$package]            Upgrades a single package.
   [-v|--verbose]                     Verbose output
+  [-w|--wget \$package]               wgets a single package.
   \$package_manager                   Run only for this specific package manager.
 "
 . "${SCRIPT_PATH}/../share/curate-pkg/header"
@@ -47,6 +48,8 @@ while (( ${#} > 0 )); do
   '-u'|'--upgrade') shift && upgrade_item="${1}" && explicit=true ;;
   # [-v|--verbose]                     Verbose output
   '-v'|'--verbose') shift && verbose='' && explicit=true ;;
+  # [-w|--wget \$package]            wgets a single package.
+  '-w'|'--wget') shift && wget_item="${1}" && explicit=true ;;
   *)
     # \$package_manager                   Run only for this specific package manager.
     [[ -z "${package_manager}" ]] && package_manager="${1}" && shift && continue
@@ -57,27 +60,35 @@ done
 
 #------------------------------------------------------------------------------#
 
+# Traps
 function cleanup() {
   ${cleanup_added_sources}
   spinner_end 0 &> /dev/null
 }
+for t in HUP INT QUIT ABRT KILL ALRM TERM; do
+  trap "return_code=\${?}; trap - EXIT; printf \"${t} %s\\n\" \"\${return_code}\" 1>&2" ${t}
+done
 
 function printHeader() {
-  local title="${1}"
-  local column_count="$(tput cols)"
-  local hash_count=$((column_count - 2 - ${#title}))
-  local one_side_column_count="$((hash_count / 2))"
+  local title
+  local column_count
+  local hash_count
+  local one_side_column_count
+  title="${1}"
+  column_count="$(tput cols)"
+  hash_count=$((column_count - 2 - ${#title}))
+  one_side_column_count="$((hash_count / 2))"
   for (( i=0; i < "${one_side_column_count}"; i++ )); do
-    printf "#"
+    printf '#'
   done
-  printf " %s " "${title}"
+  printf ' %s ' "${title}"
   if [[ $((hash_count % 2)) -eq 1 ]]; then
     one_side_column_count=$((one_side_column_count + 1))
   fi
   for (( i=0; i < "${one_side_column_count}"; i++ )); do
-    printf "#"
+    printf '#'
   done
-  printf "\n"
+  printf '\n'
 }
 
 function spinner_begin() {
@@ -135,7 +146,14 @@ if ! command -v yq 1> /dev/null; then
   ${install} yq
 fi
 
-if ! ${explicit}; then
+if ${explicit}; then
+  keys=(${add_key_item})
+  repositories=(${add_repository_item})
+  sources=(${add_source_item})
+  installables=(${install_item})
+  wgetables=(${wget_item})
+  purgeables=(${purge_item})
+else
   # Find out what there is to be done.
   keys=("$(yq -r '.["keys"][]?' < "${config}")")
   repositories=("$(yq -r '.["repositories"][]?' < "${config}")")
@@ -160,16 +178,9 @@ if ! ${explicit}; then
   done
 fi
 
-added_keys=()
-added_repositories=()
-added_sources=()
-upgraded_packages=()
-installed_packages=()
-wgot_packages=()
-purged_packages=()
-
 # Do.
 spinner_begin "Adding keys..."
+added_keys=()
 if ${explicit}; then
   if [[ ! -z ${add_key_item} ]]; then
     add_key_function "${add_key_item}"
@@ -180,111 +191,92 @@ else
   done
 fi
 spinner_end
-(( ${#added_keys[@]} > 0 )) && printf "${GREEN}Added keys: %s${RESET}\n" "${added_keys[@]}"
+[[ ! -z "${added_keys[@]}" ]] && printf "${GREEN}Added keys: %s${RESET}\n" "${added_keys[@]}"
 
 spinner_begin "Adding repositories..."
-if ! ${explicit}; then
-  if [[ ! -z ${add_repository_item} ]]; then
-    add_repository_function "${add_repository_item}"
-  fi
-else
-  for repository in ${repositories[@]}; do
-    add_repository_function "${repository}"
-  done
-fi
+added_repositories=()
+for repository in ${repositories[@]}; do
+  add_repository_function "${repository}"
+done
 spinner_end
-(( ${#added_repositories[@]} > 0 )) && printf "${GREEN}Added repositories: %s${RESET}\n" "${added_repositories[@]}"
+[[ ! -z "${added_repositories[@]}" ]] && printf "${GREEN}Added repositories: %s${RESET}\n" "${added_repositories[@]}"
 
 spinner_begin "Adding sources..."
+added_sources=()
 eval "cleanup_added_sources_ ${verbose}"
-if ${explicit}; then
-  if [[ ! -z ${add_source_item} ]]; then
-    add_source_function "${add_source_item}"
-  fi
-else
-  for src in "${sources[@]}"; do
-    protocolless_src=$(echo "${src}" | cut -d '/' -f 3-)
-    if [[ ! -z ${source_files} ]]; then
-      if ! /bin/grep -F "$(echo "${protocolless_src}")" ${source_files} &> /dev/null; then
-        add_source_function "${source}"
-      fi
+for src in "${sources[@]}"; do
+  protocolless_src=$(echo "${src}" | cut -d '/' -f 3-)
+  if [[ ! -z ${source_files} ]]; then
+    if ! /bin/grep -F "$(echo "${protocolless_src}")" ${source_files} &> /dev/null; then
+      add_source_function "${source}"
     fi
-  done
-fi
+  fi
+done
 spinner_end
-(( ${#added_sources[@]} > 0 )) && printf "${GREEN}Added sources: %s${RESET}\n" "${added_sources[@]}"
+[[ ! -z "${added_sources[@]}" ]] && printf "${GREEN}Added sources: %s${RESET}\n" "${added_sources[@]}"
 
 spinner_begin "Updating repositories..."
+updated_repositories=()
 eval "update_ ${verbose}" || true
 spinner_end
-(( ${#updated_repositories[@]} > 0 )) && printf "${GREEN}Updated repositories: %s${RESET}\n" "${updated_repositories[@]}"
+[[ ! -z "${updated_repositories[@]}" ]] && printf "${GREEN}Updated repositories: %s${RESET}\n" "${updated_repositories[@]}"
 
 spinner_begin "Installing..."
-if ${explicit}; then
-  if [[ ! -z ${install_item} ]]; then
-    install_function ${install_item}
+installed_packages=()
+for package in ${installables[@]}; do
+  set +e
+  eval "check_package_ \"${package}\"" ${verbose}
+  return_code=${?}
+  set -e
+  if [[ ${return_code} -ne 0 ]]; then
+    install_function "${package}"
   fi
-else
-  for package in ${installables[@]}; do
-    set +e
-    eval "check_package_ \"${package}\"" ${verbose}
-    return_code=${?}
-    set -e
-    if [[ ${return_code} -ne 0 ]]; then
-      install_function "${package}"
-    fi
-  done
-fi
+done
 spinner_end
-(( ${#installed_packages[@]} > 0 )) && printf "${GREEN}Installed packages: %s${RESET}\n" "${installed_packages[@]}"
+[[ ! -z "${installed_packages[@]}" ]] && printf "${GREEN}Installed packages: %s${RESET}\n" "${installed_packages[@]}"
 
-if ! ${explicit}; then
-  spinner_begin "wgetting..."
-  for wget in ${wgetables[@]}; do
-    name=$(echo ${wget} | cut -d '/' -f 3 | cut -d '.' -f 2)
-    directory="/usr/local/${name}"
-    if [[ ! -d ${directory} ]]; then
-      mkdir --parents ${directory}
-      file=$(mktemp --dry-run --tmpdir=${directory})
-      wget -q -O "${file}" "${wget}"
-      filetype=$(file "${file}")
-      if echo ${filetype} | /bin/grep -Ec "gzip|Zip" &> /dev/null; then
-          pushd ${directory}
-          {
-            eval "unp \"${file}\" ${verbose}"
-          }
-          popd
-      else
-        eval "manual_install_ \"${file}\" ${verbose}"
-      fi
-      rm "${file}"
+spinner_begin "wgetting..."
+wgot_packages=()
+for wget in ${wgetables[@]}; do
+  name=$(echo ${wget} | cut -d '/' -f 3 | cut -d '.' -f 2)
+  directory="/usr/local/${name}"
+  if [[ ! -d ${directory} ]]; then
+    mkdir -p "${directory}"
+    file=$(mktemp --dry-run --tmpdir=${directory})
+    wget -q -O "${file}" "${wget}"
+    filetype=$(file "${file}")
+    if echo ${filetype} | /bin/grep -Ec "gzip|Zip" &> /dev/null; then
+        pushd "${directory}"
+        {
+          eval "unp \"${file}\" ${verbose}"
+        }
+        popd
+    else
+      eval "manual_install_ \"${file}\" ${verbose}"
     fi
-    wgot_packages+=("${wget}")
-  done
-  spinner_end
-fi
-(( ${#wgot_packages[@]} > 0 )) && printf "${GREEN}wgot packages: %s${RESET}\n" "${wgot_packages[@]}"
+    rm "${file}"
+  fi
+  wgot_packages+=("${wget}")
+done
+spinner_end
+[[ ! -z "${wgot_packages[@]}" ]] && printf "${GREEN}wgot packages: %s${RESET}\n" "${wgot_packages[@]}"
 
 spinner_begin "Purging..."
-if ${explicit}; then
-  if [[ ! -z ${purge_item} ]]; then
-    purge_function "${purge_item}"
+purged_packages=()
+for package in ${purgeables[@]}; do
+  set +e
+  eval "check_package_ \"${package}\" ${verbose}"
+  return_code=${?}
+  set -e
+  if [[ ${return_code} -eq 0 ]]; then
+    purge_function "${package}"
   fi
-else
-  for package in ${purgeables[@]}; do
-    set +e
-    eval "check_package_ \"${package}\" ${verbose}"
-    return_code=${?}
-    set -e
-    if [[ ${return_code} -eq 0 ]]; then
-      purge_function "${package}"
-    fi
-  done
-fi
+done
 spinner_end
-(( ${#purged_packages[@]} > 0 )) && printf "${GREEN}Purged packages: %s${RESET}\n" "${purged_packages[@]}"
+[[ ! -z "${purged_packages[@]}" ]] && printf "${GREEN}Purged packages: %s${RESET}\n" "${purged_packages[@]}"
 
 spinner_begin "Upgrading..."
+upgraded_packages=()
 if ${explicit}; then
   if [[ ! -z ${upgrade_item} ]]; then
     upgrade_function ${upgrade_item}
@@ -293,13 +285,14 @@ else
   upgrade_function
 fi
 spinner_end
+[[ ! -z "${upgraded_packages[@]}" ]] && printf "${GREEN}Upgraded packages: %s${RESET}\n" "${upgraded_packages[@]}"
 
 if ! ${explicit}; then
-spinner_begin "Running custom commands..."
-for cmd in "${commands[@]}"; do
-    eval "${cmd} ${verbose}"
-  done
-spinner_end
+  spinner_begin "Running custom commands..."
+  for cmd in "${commands[@]}"; do
+      eval "${cmd} ${verbose}"
+    done
+  spinner_end
 fi
 
 spinner_begin "Removing unused packages..."

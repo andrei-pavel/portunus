@@ -1,3 +1,52 @@
+commands: []
+installables:
+  - asciinema
+  - autoconf
+  - bison
+  - blueman
+  - cargo
+  - cmake
+  - cppcheck
+  - dos2unix
+  - doxygen
+  - dunst
+  - easytag
+  - feh
+  - flex
+  - gawk
+  - git
+  - golang
+  - graphviz
+  - g++
+  - gnome-screensaver
+  - htop
+  - i3
+  - imagemagick
+  - inotify-tools
+  - jq
+  - krita
+  - libtool
+  - make
+  - mc
+  - meld
+  - mpc
+  - mpd
+  - nautilus-dropbox
+  - ncmpcpp
+  - neovim
+  - pavucontrol
+  - pkg-config
+  - postgresql
+  - powertop
+  - ranger
+  - redshift
+  - system-config-printer
+  - tilda
+  - vlc
+  - wireshark
+  - xclip
+  - zsh
+keys: []
 purgeables:
   - nano
   - nautilus
@@ -36,7 +85,7 @@ purgeables:
   - gnomine
   - landscape-common
   - libfriends0
-  - 'libfriends0:amd64'
+  - libfriends0:amd64
   - libreoffice-avmedia-backend-gstreamer
   - libreoffice-base-core
   - libreoffice-calc
@@ -97,54 +146,6 @@ purgeables:
   - unity-scope-virtualbox
   - unity-scope-yelp
   - unity-scope-zotero
-commands: []
-sources: []
-keys: []
 repositories: []
-installables:
-  - asciinema
-  - autoconf
-  - bison
-  - blueman
-  - cargo
-  - cmake
-  - cppcheck
-  - dos2unix
-  - doxygen
-  - dunst
-  - easytag
-  - feh
-  - flex
-  - gawk
-  - git
-  - golang
-  - graphviz
-  - g++
-  - gnome-screensaver
-  - htop
-  - i3
-  - imagemagick
-  - inotify-tools
-  - jq
-  - krita
-  - libtool
-  - make
-  - mc
-  - meld
-  - mpc
-  - mpd
-  - nautilus-dropbox
-  - ncmpcpp
-  - neovim
-  - pavucontrol
-  - pkg-config
-  - postgresql
-  - powertop
-  - ranger
-  - redshift
-  - system-config-printer
-  - tilda
-  - vlc
-  - wireshark
-  - xclip
-  - zsh
+sources: []
+wgetables: []

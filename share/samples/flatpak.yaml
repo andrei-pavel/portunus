@@ -1,4 +1,9 @@
-repositories:
-  - 'flathub https://flathub.org/repo/flathub.flatpakrepo'
+commands: []
 installables:
   - flathub com.github.JannikHv.Gydl
+keys: []
+purgeables:
+repositories:
+  - 'flathub https://flathub.org/repo/flathub.flatpakrepo'
+sources: []
+wgetables: []

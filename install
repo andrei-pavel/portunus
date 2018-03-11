@@ -23,10 +23,27 @@ done
 
 #------------------------------------------------------------------------------#
 
+# Add `pkg` to the list in `./install` if it has a standalone `.yaml`
+# configuration file (e.g. `pacman` does, `yaourt` doesn't since it uses
+# `pacman`'s).
+package_managers=$(cat <<EOF
+apt
+brew
+dnf
+eopkg
+flatpak
+go
+nix
+npm
+pacman
+snap
+EOF
+)
+
 pushd "${SCRIPT_PATH}" > /dev/null
 {
   mkdir -p ${HOME}/.config/curate-pkg
-  for package_manager in apt brew dnf eopkg flatpak go nix npm pacman snap; do
+  for package_manager in ${package_managers}; do
     if command -v ${package_manager} &> /dev/null; then
       if [[ ! -f ${HOME}/.config/curate-pkg/${package_manager}.yaml ]]; then
         install ${script_path}/share/empty.yaml ${HOME}/.config/curate-pkg/${package_manager}.yaml
@@ -35,6 +52,6 @@ pushd "${SCRIPT_PATH}" > /dev/null
   done
 
   # Needs to run as root but keep ${HOME}
-  (( EUID != 0 )) && exec sudo -H ./install_with_sudo
+  (( EUID != 0 )) && exec sudo -H ./share/install_with_sudo
 }
 popd 1> /dev/null

@@ -1,134 +1,5 @@
-purgeables:
-  - chromium-browser
-  - dwm
-  - emacs
-  - gnome-terminal
-  - nano
-  - nautilus
-  - totem
-  - ubuntu-terminal-app
-  - account-plugin-aim
-  - account-plugin-facebook
-  - account-plugin-flickr
-  - account-plugin-jabber
-  - account-plugin-salut
-  - account-plugin-twitter
-  - account-plugin-windows-live
-  - account-plugin-yahoo
-  - aisleriot
-  - brltty
-  - colord
-  - deja-dup
-  - deja-dup-backend-gvfs
-  - duplicity
-  - empathy
-  - empathy-common
-  - evolution-data-server-online-accounts
-  - example-content
-  - friends
-  - friends-dispatcher
-  - friends-facebook
-  - friends-twitter
-  - gnome-accessibility-themes
-  - gnome-contacts
-  - gnome-mahjongg
-  - gnome-mines
-  - gnome-orca
-  - gnome-sudoku
-  - gnome-video-effects
-  - gnomine
-  - landscape-common
-  - libav-tools
-  - libfriends0
-  - 'libfriends0:amd64'
-  - libreoffice-avmedia-backend-gstreamer
-  - libreoffice-base-core
-  - libreoffice-calc
-  - libreoffice-common
-  - libreoffice-core
-  - libreoffice-draw
-  - libreoffice-gnome
-  - libreoffice-gtk
-  - libreoffice-impress
-  - libreoffice-math
-  - libreoffice-ogltrans
-  - libreoffice-pdfimport
-  - libreoffice-presentation-minimizer
-  - libreoffice-style-galaxy
-  - libreoffice-style-human
-  - libreoffice-writer
-  - libsane
-  - libsane-common
-  - mcp-account-manager-uoa
-  - nautilus-sendto-empathy
-  - python3-uno
-  - rhythmbox
-  - rhythmbox-plugins
-  - rhythmbox-plugin-zeitgeist
-  - sane-utils
-  - shotwell
-  - shotwell-common
-  - telepathy-gabble
-  - telepathy-haze
-  - telepathy-idle
-  - telepathy-indicator
-  - telepathy-logger
-  - telepathy-mission-control-5
-  - telepathy-salut
-  - thunderbird
-  - thunderbird-gnome-support
-  - totem
-  - totem-common
-  - totem-mozilla
-  - totem-plugins
-  - unity-scope-audacious
-  - unity-scope-chromiumbookmarks
-  - unity-scope-clementine
-  - unity-scope-colourlovers
-  - unity-scope-devhelp
-  - unity-scope-firefoxbookmarks
-  - unity-scope-gdrive
-  - unity-scope-gmusicbrowser
-  - unity-scope-gourmet
-  - unity-scope-guayadeque
-  - unity-scope-manpages
-  - unity-scope-musicstores
-  - unity-scope-musique
-  - unity-scope-openclipart
-  - unity-scope-texdoc
-  - unity-scope-tomboy
-  - unity-scope-video-remote
-  - unity-scope-virtualbox
-  - unity-scope-yelp
-  - unity-scope-zotero
-  - xfce4-terminal
 commands:
   - ubuntu-drivers autoinstall
-sources:
-  - 'deb [arch=amd64] https://download.docker.com/linux/ubuntu artful edge'
-  - 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main'
-  - >-
-    deb [arch=amd64] https://packages.cisofy.com/community/lynis/deb/ stable
-    main
-  - 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
-keys:
-  - 'https://dl.google.com/linux/linux_signing_key.pub'
-  - 'https://download.docker.com/linux/ubuntu/gpg'
-  - 'https://packages.cisofy.com/keys/cisofy-software-public.key'
-  - 'https://packages.microsoft.com/keys/microsoft.asc'
-repositories:
-  - multiverse
-  - 'ppa:apandada1/up-clock'
-  - 'ppa:maateen/battery-monitor'
-  - 'ppa:s.noack/ppa'
-  - 'ppa:teejee2008/ppa'
-  - 'ppa:twodopeshaggy/jarun'
-wgetables:
-  - 'https://dl.pstmn.io/download/latest/linux?arch=64'
-  - 'https://download.teamviewer.com/download/teamviewer_i386.deb'
-  - 'https://go.skype.com/skypeforlinux-64.deb'
-  - 'https://redirector.gvt1.com/edgedl/go/go1.9.2.linux-amd64.tar.gz'
-  - 'https://release.gitkraken.com/linux/gitkraken-amd64.deb'
 installables:
   - apt-file
   - apt-listchanges
@@ -311,3 +182,131 @@ installables:
   - xutils
   - youtube-dl
   - zsh
+keys:
+  - https://dl.google.com/linux/linux_signing_key.pub
+  - https://download.docker.com/linux/ubuntu/gpg
+  - https://packages.cisofy.com/keys/cisofy-software-public.key
+  - https://packages.microsoft.com/keys/microsoft.asc
+purgeables:
+  - chromium-browser
+  - dwm
+  - emacs
+  - gnome-terminal
+  - nano
+  - nautilus
+  - totem
+  - ubuntu-terminal-app
+  - account-plugin-aim
+  - account-plugin-facebook
+  - account-plugin-flickr
+  - account-plugin-jabber
+  - account-plugin-salut
+  - account-plugin-twitter
+  - account-plugin-windows-live
+  - account-plugin-yahoo
+  - aisleriot
+  - brltty
+  - colord
+  - deja-dup
+  - deja-dup-backend-gvfs
+  - duplicity
+  - empathy
+  - empathy-common
+  - evolution-data-server-online-accounts
+  - example-content
+  - friends
+  - friends-dispatcher
+  - friends-facebook
+  - friends-twitter
+  - gnome-accessibility-themes
+  - gnome-contacts
+  - gnome-mahjongg
+  - gnome-mines
+  - gnome-orca
+  - gnome-sudoku
+  - gnome-video-effects
+  - gnomine
+  - landscape-common
+  - libav-tools
+  - libfriends0
+  - libfriends0:amd64'
+  - libreoffice-avmedia-backend-gstreamer
+  - libreoffice-base-core
+  - libreoffice-calc
+  - libreoffice-common
+  - libreoffice-core
+  - libreoffice-draw
+  - libreoffice-gnome
+  - libreoffice-gtk
+  - libreoffice-impress
+  - libreoffice-math
+  - libreoffice-ogltrans
+  - libreoffice-pdfimport
+  - libreoffice-presentation-minimizer
+  - libreoffice-style-galaxy
+  - libreoffice-style-human
+  - libreoffice-writer
+  - libsane
+  - libsane-common
+  - mcp-account-manager-uoa
+  - nautilus-sendto-empathy
+  - python3-uno
+  - rhythmbox
+  - rhythmbox-plugins
+  - rhythmbox-plugin-zeitgeist
+  - sane-utils
+  - shotwell
+  - shotwell-common
+  - telepathy-gabble
+  - telepathy-haze
+  - telepathy-idle
+  - telepathy-indicator
+  - telepathy-logger
+  - telepathy-mission-control-5
+  - telepathy-salut
+  - thunderbird
+  - thunderbird-gnome-support
+  - totem
+  - totem-common
+  - totem-mozilla
+  - totem-plugins
+  - unity-scope-audacious
+  - unity-scope-chromiumbookmarks
+  - unity-scope-clementine
+  - unity-scope-colourlovers
+  - unity-scope-devhelp
+  - unity-scope-firefoxbookmarks
+  - unity-scope-gdrive
+  - unity-scope-gmusicbrowser
+  - unity-scope-gourmet
+  - unity-scope-guayadeque
+  - unity-scope-manpages
+  - unity-scope-musicstores
+  - unity-scope-musique
+  - unity-scope-openclipart
+  - unity-scope-texdoc
+  - unity-scope-tomboy
+  - unity-scope-video-remote
+  - unity-scope-virtualbox
+  - unity-scope-yelp
+  - unity-scope-zotero
+  - xfce4-terminal
+repositories:
+  - multiverse
+  - ppa:apandada1/up-clock
+  - ppa:maateen/battery-monitor
+  - ppa:s.noack/ppa
+  - ppa:teejee2008/ppa
+  - ppa:twodopeshaggy/jarun
+sources:
+  - deb [arch=amd64] https://download.docker.com/linux/ubuntu artful edge
+  - deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
+  - deb [arch=amd64] https://packages.cisofy.com/community/lynis/deb/ stable
+    main
+  - deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main
+wgetables:
+  - https://dl.pstmn.io/download/latest/linux?arch=64
+  - https://download.teamviewer.com/download/teamviewer_i386.deb
+  - https://go.skype.com/skypeforlinux-64.deb
+  - https://redirector.gvt1.com/edgedl/go/go1.9.2.linux-amd64.tar.gz
+  - https://release.gitkraken.com/linux/gitkraken-amd64.deb

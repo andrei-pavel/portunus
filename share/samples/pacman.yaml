@@ -1,4 +1,7 @@
-purgeables: []
+purgeables:
+  - konsole
+  - termite
+  - xterm
 commands: []
 sources: []
 keys: []
@@ -16,22 +19,28 @@ installables:
   - colordiff
   - compton
   - code
+  - cpplint
   - create_ap
   - deadbeef
   - dialog
   - docker
   - dropbox
   - exa
-  - firefox
+  - google-chrome-dev
+  - gnu-netcat
   - git
   - go
   - gparted
   - haskell-yaml
+  - htop
   - hwinfo
-  - i3lock
+  - i3lock-fancy-dualmonitors-git
   - jq
   - js-beautify
   - krita
+  - lib32-libldap
+  - lsof
+  - mailspring
   - mesa
   - mlocate
   - most
@@ -39,7 +48,10 @@ installables:
   - mpd
   - ncmpcpp
   - neovim
+  - netdata
   - network-manager-applet
+  - nmap
+  - openoffice
   - openssh
   - postman-bin
   - pam-face-authentication
@@ -49,25 +61,24 @@ installables:
   - plasma
   - plasma-wayland-session
   - pulseaudio
+  - pulseaudio-bluetooth
   - pulsemixer
   - pup-git
-  - rambox
+  - rambox-bin
   - ranger
   - redshift
   - remmina
   - ripgrep
   - rofi
+  - simplenote-electron-bin
+  - snapd
+  - snappy
   - steam
   - strace
   - synergy
-  - system-config-printer
-  - teamviewer-beta
-  - termite
   - thunar
-  - thunderbird
-  - touchegg
+  - tilix
   - ttf-inconsolata
-  - turtl
   - unp
   - unzip
   - vicious
@@ -101,3 +112,5 @@ installables:
   - xorg-xclock
   - xorg-xinit
   - yaourt
+  - yarn
+  - zoom

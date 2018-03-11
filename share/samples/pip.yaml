@@ -1,5 +1,10 @@
-repositories: []
+commands: []
 installables:
   - musicnow
   - pockyt
   - wal
+keys: []
+purgeables: []
+repositories: []
+sources: []
+wgetables: []
