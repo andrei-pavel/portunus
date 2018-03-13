@@ -27,16 +27,16 @@ function printUsage() {
   if [[ -z ${ARGUMENTS} ]]; then
     local arguments=""
   else
-    local arguments="<arguments>"
+    local arguments="{{arguments}}"
     ARGUMENTS="
 Arguments:
 ${ARGUMENTS}"
   fi
   printf "\
-Usage: %s <options> %s
+Usage: %s {{options}} %s
 Options:
-  [-d|--debug]                 Enables debug mode, showing every executed statement.
-  [-h|--help]                  Prints usage (this text).%s
+  [-d|--debug]                                 Enables debug mode, showing every executed statement.
+  [-h|--help]                                  Prints usage (this text).%s
 " "$(basename "${0}")" "${arguments}" "${ARGUMENTS}"
 }
 
