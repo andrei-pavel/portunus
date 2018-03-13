@@ -47,7 +47,7 @@ while (( ${#} > 0 )); do
   # [-u|--upgrade \$package]            Upgrades a single package.
   '-u'|'--upgrade') shift && upgrade_item="${1}" && explicit=true ;;
   # [-v|--verbose]                     Verbose output
-  '-v'|'--verbose') shift && verbose='' && explicit=true ;;
+  '-v'|'--verbose') verbose='' ;;
   # [-w|--wget \$package]            wgets a single package.
   '-w'|'--wget') shift && wget_item="${1}" && explicit=true ;;
   *)
