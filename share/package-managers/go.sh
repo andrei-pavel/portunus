@@ -8,7 +8,7 @@ config="${HOME}/.config/curate-pkg/go.yaml"
 
 function check_package_() {
   local package="${1}"
-  go list "${package}"
+  go list ... | grep "${package}"
   return "${?}"
 }
 
