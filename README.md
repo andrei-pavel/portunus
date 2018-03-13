@@ -7,6 +7,8 @@ that script you craved for to keep a consistent image of installed packages acro
 
 - [Introduction](#introduction)
 - [Installation](#installation)
+  - [Using the AUR](#using-the-aur)
+  - [Manual](#manual)
 - [Dependencies](#dependencies)
 - [Configuration](#configuration)
 - [Usage](#usage)
@@ -38,6 +40,14 @@ Supported package managers:
 
 
 ## Installation
+
+### Using the AUR
+
+```sh
+yaourt --aur -Syyu curate-pkg-git
+```
+
+### Manual
 
 ```sh
 git clone https://github.com/andrei-pavel/curate-pkg.git
