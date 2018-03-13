@@ -24,6 +24,9 @@ ARGUMENTS="\
 
 # Parse arguments.
 additional=
+if [[ "${-}" == *x* ]]; then
+  additional+=' -d'
+fi
 auto=false
 while (( ${#} > 0 )); do
   case "${1}" in
