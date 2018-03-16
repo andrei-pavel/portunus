@@ -48,18 +48,18 @@ pushd "${SCRIPT_PATH}" > /dev/null
 {
   mkdir -p ${HOME}/.config/curate-pkg
   for package_manager in ${package_managers}; do
-    if command -v ${package_manager} &> /dev/null; then
-      if [[ ! -f ${HOME}/.config/curate-pkg/${package_manager}.yaml ]]; then
-        install ${SCRIPT_PATH}/share/empty.yaml ${HOME}/.config/curate-pkg/${package_manager}.yaml
+    if command -v "${package_manager}" &> /dev/null; then
+      if [[ ! -f "${HOME}/.config/curate-pkg/${package_manager}.yaml" ]]; then
+        install "${SCRIPT_PATH}/share/empty.yaml" "${HOME}/.config/curate-pkg/${package_manager}.yaml"
       fi
     fi
   done
 
   if (( EUID == 0 )); then
-    ./share/install_with_sudo
+    ./share/install_with_sudo -p "${pkgdir}"
   else
     # Needs to run as root but keep ${HOME}
-    sudo -H ./share/install_with_sudo -p ${pkgdir}
+    sudo -H ./share/install_with_sudo -p "${pkgdir}"
   fi
 }
 popd 1> /dev/null
