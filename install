@@ -51,7 +51,11 @@ pushd "${SCRIPT_PATH}" > /dev/null
     fi
   done
 
-  # Needs to run as root but keep ${HOME}
-  (( EUID != 0 )) && exec sudo -H ./share/install_with_sudo
+  if (( EUID == 0 )); then
+    ./share/install_with_sudo
+  else
+    # Needs to run as root but keep ${HOME}
+    sudo -H ./share/install_with_sudo
+  fi
 }
 popd 1> /dev/null
