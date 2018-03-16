@@ -46,7 +46,7 @@ pushd "${SCRIPT_PATH}" > /dev/null
   for package_manager in ${package_managers}; do
     if command -v ${package_manager} &> /dev/null; then
       if [[ ! -f ${HOME}/.config/curate-pkg/${package_manager}.yaml ]]; then
-        install ${script_path}/share/empty.yaml ${HOME}/.config/curate-pkg/${package_manager}.yaml
+        install ${SCRIPT_PATH}/share/empty.yaml ${HOME}/.config/curate-pkg/${package_manager}.yaml
       fi
     fi
   done
