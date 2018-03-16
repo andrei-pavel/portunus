@@ -9,12 +9,16 @@ PATH="${PATH}:${SCRIPT_PATH}"
 
 # Header
 ARGUMENTS="\
+  [-p|--prefix] \$prefix        sets the \${pkgdir} used for AUR PKGBUILD
 "
 . "${SCRIPT_PATH}/share/header"
 
 # Parse arguments.
+pkgdir=
 while (( ${#} > 0 )); do
   case "${1}" in
+  # [-p|--prefix] \$prefix        sets the \${pkgdir} used for AUR PKGBUILD
+  '-p'|'--prefix') shift && pkgdir="${1}";;
   *)
     # Unrecognized argument
     printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; printUsage; exit 1;;
@@ -55,7 +59,7 @@ pushd "${SCRIPT_PATH}" > /dev/null
     ./share/install_with_sudo
   else
     # Needs to run as root but keep ${HOME}
-    sudo -H ./share/install_with_sudo
+    sudo -H ./share/install_with_sudo -p ${pkgdir}
   fi
 }
 popd 1> /dev/null

@@ -9,31 +9,36 @@ PATH="${PATH}:${SCRIPT_PATH}"
 
 # Header
 ARGUMENTS="\
+  [-p|--prefix] \$prefix        sets the \${pkgdir} used for AUR PKGBUILD
 "
 . "${SCRIPT_PATH}/header"
 
 # Parse arguments.
+pkgdir=
 while (( ${#} > 0 )); do
   case "${1}" in
+  # [-p|--prefix] \$prefix        sets the \${pkgdir} used for AUR PKGBUILD
+  '-p'|'--prefix') shift && pkgdir="${1}";;
   *)
     # Unrecognized argument
     printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; printUsage; exit 1;;
   esac; shift
 done
 
+
 #------------------------------------------------------------------------------#
 
 pushd "${SCRIPT_PATH}" 1> /dev/null
 {
-  mkdir -p /usr/local/bin
-  install ../bin/* /usr/local/bin
-  mkdir -p /usr/local/share/curate-pkg/samples
-  mkdir -p /usr/local/share/curate-pkg/package-managers
-  install ./header /usr/local/share/curate-pkg
-  install ./spinner /usr/local/share/curate-pkg
-  install ./*.yaml /usr/local/share/curate-pkg
-  install ./package-managers/*.sh /usr/local/share/curate-pkg/package-managers
-  install ./samples/* /usr/local/share/curate-pkg/samples
+  mkdir -p "${pkgdir}/usr/local/bin"
+  install ../bin/* "${pkgdir}/usr/local/bin"
+  mkdir -p "${pkgdir}/usr/local/share/curate-pkg/samples"
+  mkdir -p "${pkgdir}/usr/local/share/curate-pkg/package-managers"
+  install ./header "${pkgdir}/usr/local/share/curate-pkg"
+  install ./spinner "${pkgdir}/usr/local/share/curate-pkg"
+  install ./*.yaml "${pkgdir}/usr/local/share/curate-pkg"
+  install ./package-managers/*.sh "${pkgdir}/usr/local/share/curate-pkg/package-managers"
+  install ./samples/* "${pkgdir}/usr/local/share/curate-pkg/samples"
   if ! command -v yq &> /dev/null; then
     pip install share/yq-2.3.4-py2.py3-none-any.whl
   fi
