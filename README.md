@@ -2,7 +2,7 @@
 
 that script you craved for to keep a consistent image of installed packages across **ALL** package managers
 
-[![Build status](https://circleci.com/gh/andrei-pavel/curate-pkg.svg?style=svg)](https://circleci.com/gh/andrei-pavel/curate-pkg)
+Tests [![Build status](https://circleci.com/gh/andrei-pavel/curate-pkg.svg?style=svg)](https://circleci.com/gh/andrei-pavel/curate-pkg)
 
 
 ## Table of Contents
