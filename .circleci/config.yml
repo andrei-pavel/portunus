@@ -1,13 +1,24 @@
-version: 1
+version: r45.29a8834
 jobs:
-  build:
+  debian:
     docker:
-      - image: debian:stretch
+      - image: debian:latest
+    steps:
+     - checkout
+      - run:
+          name: Show help.
+          command: curate-pkg -h
+      - run:
+          name: Install a package.
+          command: curate-pkg -i htop
+  arch-linux:
+    docker:
+      - image: archlinux:latest
     steps:
       - checkout
       - run:
-          name: Greeting
-          command: echo Hello, world.
+          name: Show help.
+          command: curate-pkg -h
       - run:
-          name: Print the Current Time
-          command: date
+          name: Install a package.
+          command: curate-pkg -i htop
