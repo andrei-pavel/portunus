@@ -1,0 +1,14 @@
+function _curate_pkg() {
+  local current options previous
+  COMPREPLY=()
+  current="${COMP_WORDS[COMP_CWORD]}"
+  previous="${COMP_WORDS[COMP_CWORD-1]}"
+  options='-d --debug -h --help -a --auto -v --verbose -i --install -k \
+    --add-key -p --purge -r --add-reository -s --add-source -u --upgrade'
+
+  COMPREPLY=($(compgen -W "${options}" -- ${current}))
+  return 0
+}
+
+complete -F _curate_pkg curate-pkg
+

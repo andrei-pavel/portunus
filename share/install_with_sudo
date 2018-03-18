@@ -30,6 +30,7 @@ done
 
 pushd "${SCRIPT_PATH}" 1> /dev/null
 {
+  # Install.
   mkdir -p "${pkgdir}/usr/local/bin"
   install ../bin/* "${pkgdir}/usr/local/bin"
   mkdir -p "${pkgdir}/usr/local/share/curate-pkg/samples"
@@ -39,6 +40,18 @@ pushd "${SCRIPT_PATH}" 1> /dev/null
   install ./*.yaml "${pkgdir}/usr/local/share/curate-pkg"
   install ./package-managers/*.sh "${pkgdir}/usr/local/share/curate-pkg/package-managers"
   install ./samples/* "${pkgdir}/usr/local/share/curate-pkg/samples"
+
+  # Install bash_completions.
+  set +e
+  bash_completions="$(pkg-config --variable=completionsdir bash-completion)"
+  result="${?}"
+  set -e
+  if (( result != 0 )); then
+    bash_completions='/usr/share/bash-completion/completions'
+  fi
+  install ./bash-completion "${pkgdir}/${bash_completions}/curate-pkg"
+
+  # Install yq if not already installed.
   if ! command -v yq &> /dev/null; then
     pip install share/yq-2.3.4-py2.py3-none-any.whl
   fi
