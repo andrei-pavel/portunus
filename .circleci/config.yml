@@ -1,6 +1,6 @@
 version: r45.29a8834
 jobs:
-  debian:
+  build:
     docker:
       - image: debian:latest
     steps:
@@ -11,7 +11,7 @@ jobs:
       - run:
           name: Install a package.
           command: curate-pkg -i htop
-  arch-linux:
+  build:
     docker:
       - image: archlinux:latest
     steps:
