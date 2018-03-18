@@ -121,7 +121,7 @@ Start by running `curate-pkg` everyday to keep all your packages up to date. The
 
 ## Contributing
 
-For changes to the package manager engine, you only need to know [bash](http://books.goalkicker.com/BashBook) and portability best practices.<br/>
+For changes to the package manager engine, you only need to know [bash](http://books.goalkicker.com/BashBook) and try to respect portability best practices. If you add a new argument, add it to the print usage function, the bash completions file and README.md.<br/>
 If, however, you wish to add support for a package manager, either create an issue, or follow these steps given for `pkg` as said package manager:<br/>
 
 1. `cp share/empty.sh share/packages-managers/pkg.sh`
