@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Build.
-          command: ./install
+          command: sudo apt-get install pkg-config pip && ./install
       - run:
           name: Show help.
           command: curate-pkg -h
@@ -22,7 +22,7 @@ jobs:
       - checkout
       - run:
           name: Build.
-          command: ./install
+          command: sudo pacman -Syyu pkg-config pip && ./install
       - run:
           name: Show help.
           command: curate-pkg -h
