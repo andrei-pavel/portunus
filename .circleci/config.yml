@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Build.
+          command: ./install
+      - run:
           name: Show help.
           command: curate-pkg -h
       - run:
@@ -17,6 +20,9 @@ jobs:
       - image: debian:latest
     steps:
       - checkout
+      - run:
+          name: Build.
+          command: ./install
       - run:
           name: Show help.
           command: curate-pkg -h
