@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Build.
-          command: pacman -Syyu pkg-config python-pip && ./install
+          command: pacman -Syyu --noconfirm pkg-config python-pip && ./install
       - run:
           name: Show help.
           command: curate-pkg -h
@@ -22,7 +22,7 @@ jobs:
       - checkout
       - run:
           name: Build.
-          command: apt-get update && apt-get install pkg-config pip && ./install
+          command: apt-get update && apt-get install pkg-config python-pip python-dev build-essential && ./install
       - run:
           name: Show help.
           command: curate-pkg -h
