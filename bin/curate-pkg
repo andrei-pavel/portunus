@@ -83,8 +83,9 @@ while true; do
       continue
     fi
     found=true
-    if [[ ${package_manager} == "pacaur" ||
-          ${package_manager} == "yaourt" ]]; then
+    if (( EUID == 0 )) ||
+      [[ ${package_manager} == "pacaur" ||
+         ${package_manager} == "yaourt" ]]; then
       curate-pkg-one ${additional} ${package_manager} || true
     else
       sudo -H curate-pkg-one ${additional} ${package_manager} || true
