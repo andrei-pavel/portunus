@@ -96,23 +96,20 @@ Samples:
 ## Usage
 
 ```sh
-$ curate-pkg --help
-```
-
-```sh
 Usage: curate-pkg {{options}} {{arguments}}
 Options:
   [-d|--debug]                                 Enables debug mode, showing every executed statement.
   [-h|--help]                                  Prints usage (this text).
 Arguments:
   [-a|--auto]                                  Cool continuous curation
-  [-v|--verbose]                               Verbose output
   [-i|--install $package]                      Installs a single package.
   [-k|--add-key $key]                          Adds a single key.
   [-p|--purge|--remove $package]               Removes a single package.
   [-r|--add-repository $repository]            Adds a single repository.
   [-s|--add-source $source]                    Adds a single source.
   [-u|--upgrade $package]                      Upgrades a single package.
+  [-v|--verbose]                               Verbose output
+  [-V|--version]                               Display version and exit.
   $package_manager                             Run only for this specific package manager.
 ```
 
@@ -130,5 +127,7 @@ If, however, you wish to add support for a package manager, either create an iss
 4. Add `pkg` to the list in `./install` if it has a standalone `.yaml` configuration file (e.g. `pacman` does, `yaourt` doesn't since it uses `pacman`'s).
 5. Add your `pkg.yaml` configuration file to `./share/samples`.
 6. Add `pkg` to `README.md`.
+
+In any case, bump the version in the part where `-V|--version` is handled by setting it to `1.$(( $(git rev-list --count master) + 1 ))`
 
 Thank you for your contribution!
