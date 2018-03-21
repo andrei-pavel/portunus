@@ -4,6 +4,8 @@ the script that keeps a consistent state of installed packages across **ALL** Li
 
 Tests [![Build status](https://circleci.com/gh/andrei-pavel/curate-pkg.svg?style=svg)](https://circleci.com/gh/andrei-pavel/curate-pkg) for ArchLinux & Debian.
 
+Version 1.62
+
 
 ## Table of Contents
 
@@ -128,6 +130,6 @@ If, however, you wish to add support for a package manager, either create an iss
 5. Add your `pkg.yaml` configuration file to `./share/samples`.
 6. Add `pkg` to `README.md`.
 
-In any case, bump the version in the part where `-V|--version` is handled by setting it to `1.$(( $(git rev-list --count master) + 1 ))`
+In any case, bump the version in the README.md and in the code where `-V|--version` is handled by setting it to `1.$(( $(git rev-list --count master) + 1 ))`
 
 Thank you for your contribution!

@@ -49,6 +49,7 @@ pushd "${SCRIPT_PATH}" 1> /dev/null
   if (( result != 0 )); then
     bash_completions='/usr/share/bash-completion/completions'
   fi
+  mkdir -p "${bash_completions}"
   install ./bash-completion "${pkgdir}/${bash_completions}/curate-pkg"
 
   # Install yq if not already installed.
