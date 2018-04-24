@@ -20,8 +20,8 @@ ARGUMENTS="\
   [-V|--version]                               Display version and exit.
   \$package_manager                             Run only for this specific package manager.
 "
-. "${SCRIPT_PATH}/../share/curate-pkg/header"
-. "${SCRIPT_PATH}/../share/curate-pkg/spinner"
+. "${SCRIPT_PATH}/../share/curate-pkg/lib/header"
+. "${SCRIPT_PATH}/../share/curate-pkg/lib/utils"
 
 # Parse arguments.
 additional=

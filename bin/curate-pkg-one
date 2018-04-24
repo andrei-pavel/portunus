@@ -19,8 +19,8 @@ ARGUMENTS="\
   [-w|--wget \$package]               wgets a single package.
   \$package_manager                   Run only for this specific package manager.
 "
-. "${SCRIPT_PATH}/../share/curate-pkg/header"
-. "${SCRIPT_PATH}/../share/curate-pkg/spinner"
+. "${SCRIPT_PATH}/../share/curate-pkg/lib/header"
+. "${SCRIPT_PATH}/../share/curate-pkg/lib/utils"
 
 # Parse arguments.
 package_manager=
@@ -63,7 +63,7 @@ done
 # Traps
 function cleanup {
   ${cleanup_added_sources}
-  spinner_end 0 &> /dev/null
+  spinner_end &> /dev/null
 }
 for t in HUP INT QUIT ABRT KILL ALRM TERM; do
   trap "return_code=\${?}; trap - EXIT; printf \"${t} %s\\n\" \"\${return_code}\" 1>&2" ${t}
