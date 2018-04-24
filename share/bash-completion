@@ -1,4 +1,4 @@
-function _curate_pkg() {
+function _curate_pkg {
   local current options previous
   COMPREPLY=()
   current="${COMP_WORDS[COMP_CWORD]}"

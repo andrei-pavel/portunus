@@ -49,7 +49,7 @@ while (( ${#} > 0 )); do
   # [-v|--verbose]                               Verbose output
   '-v'|'--verbose') additional+=" ${1}" ;;
   # [-V|--version]                               Display version and exit.
-  '-V'|'--version') printf "v1.63\n" && exit 0 ;;
+  '-V'|'--version') printf "v1.64\n" && exit 0 ;;
   *)
     # \$package_manager                             Run only for this specific package manager.
     [[ -z "${explicit_package_manager}" ]] && explicit_package_manager="${1}" && shift && continue
@@ -70,15 +70,50 @@ EOF
 )
 
 optional_package_managers=$(cat <<EOF
+PKGBUILDer
+aura
+auracle
+aurman
+aurutils
+bauerbill
 flatpak
 go
+naaman
 nix
 npm
-pacaur
+package-query
+pakku
+pikaur
+repoctl
 snap
-yaourt
+trizen
+yay
 EOF
 )
+
+non_privileged_package_managers=$(cat <<EOF
+PKGBUILDer
+aura
+auracle
+aurman
+aurutils
+bauerbill
+naaman
+package-query
+pakku
+pikaur
+repoctl
+trizen
+yay
+EOF
+)
+
+function works_best_non_privileged {
+  if [[ "${non_privileged_package_managers}" == *${1}* ]]; then
+    return 0
+  fi
+  return 1
+}
 
 while true; do
   for package_manager in ${package_managers} ${optional_package_managers}; do
@@ -86,9 +121,7 @@ while true; do
       continue
     fi
     found=true
-    if (( EUID == 0 )) ||
-      [[ ${package_manager} == "pacaur" ||
-         ${package_manager} == "yaourt" ]]; then
+    if (( EUID == 0 )) || works_best_non_privileged ${package_manager}; then
       curate-pkg-one ${additional} ${package_manager} || true
     else
       sudo -H curate-pkg-one ${additional} ${package_manager} || true

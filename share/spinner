@@ -20,7 +20,7 @@
 # Also see: test.sh
 
 
-function _spinner() {
+function _spinner {
     # $1 start/stop
     #
     # on start: $2 display message

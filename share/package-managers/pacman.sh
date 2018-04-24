@@ -6,50 +6,53 @@
 source_files=""
 config="${HOME}/.config/curate-pkg/pacman.yaml"
 
-function check_package_() {
+function check_package_ {
   local package="${1}"
   pacman -Qi "${package}" || pacman -Qg "${package}"
   return "${?}"
 }
 
-function add_key_ () {
+function add_key_  {
+  local key="${1}"
   true
   return "${?}"
 }
 
-function add_repository_() {
+function add_repository_ {
+  local repository="${1}"
   true
   return "${?}"
 }
 
-function add_source_() {
+function add_source_ {
+  local source="${1}"
   true
   return "${?}"
 }
 
-function cleanup_added_sources_() {
+function cleanup_added_sources_ {
   true
   return "${?}"
 }
 
-function install_() {
+function install_ {
   local package="${1}"
   pacman -Syy --force --needed --noconfirm "${package}"
   return "${?}"
 }
 
-function purge_() {
+function purge_ {
   local package="${1}"
   pacman -Rsc --noconfirm "${package}"
   return "${?}"
 }
 
-function update_() {
+function update_ {
   pacman -Sy --force --needed --noconfirm
   return "${?}"
 }
 
-function upgrade_() {
+function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
     pacman -Su --force --needed --noconfirm
     return "${?}"
@@ -60,17 +63,20 @@ function upgrade_() {
   return "${?}"
 }
 
-function autoremove_() {
-  pacman -Qtd | cut -d ' ' -f 1 | xargs pacman -Rsc --noconfirm
+function autoremove_ {
+  to_be_removed=$(pacman -Qtd --aur --noconfirm 2>&1 | cut -d ' ' -f 1 | cut -d '/' -f 2 | head -n -3)
+  if [[ ! -z ${to_be_removed} ]]; then
+    echo "${to_be_removed}" | xargs pacman -Rsc --noconfirm
+  fi
   return "${?}"
 }
 
-function upgrade_os_() {
+function upgrade_os_ {
   true
   return "${?}"
 }
 
-function manual_install_() {
+function manual_install_ {
   local package="${1}"
   pacman -Sq --force --noconfirm "${package}"
   return "${?}"

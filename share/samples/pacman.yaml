@@ -10,7 +10,6 @@ installables:
   - bluez-utils
   - colordiff
   - compton
-  - code
   - cpplint
   - create_ap
   - deadbeef
@@ -18,7 +17,7 @@ installables:
   - docker
   - dropbox
   - exa
-  - google-chrome-dev
+  - firefox
   - gnu-netcat
   - git
   - go
@@ -30,9 +29,7 @@ installables:
   - jq
   - js-beautify
   - krita
-  - lib32-libldap
   - lsof
-  - mailspring
   - mesa
   - mlocate
   - most
@@ -46,9 +43,7 @@ installables:
   - openoffice
   - openssh
   - postman-bin
-  - pam-face-authentication
   - paprefs
-  - pasystray-gtk3-standalone
   - pkgfile
   - plasma
   - plasma-wayland-session
@@ -59,14 +54,13 @@ installables:
   - rambox-bin
   - ranger
   - redshift
-  - remmina
   - ripgrep
   - rofi
   - simplenote-electron-bin
   - snapd
   - snappy
-  - steam
   - strace
+  - subl3
   - synergy
   - thunar
   - tilix
@@ -76,7 +70,6 @@ installables:
   - vicious
   - vulkan-intel
   - wget
-  - wine
   - wpa_supplicant
   - xautolock
   - xf86-input-elographics
@@ -103,8 +96,8 @@ installables:
   - xorg-twm
   - xorg-xclock
   - xorg-xinit
-  - yaourt
   - yarn
+  - yay
   - zoom
 keys: []
 purgeables:

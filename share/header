@@ -23,7 +23,7 @@ CYAN="\e[1m\e[36m"
 WHITE="\e[1m\e[37m"
 
 # Print usage function
-function printUsage() {
+function printUsage {
   if [[ -z ${ARGUMENTS} ]]; then
     local arguments=""
   else
@@ -35,8 +35,8 @@ ${ARGUMENTS}"
   printf "\
 Usage: %s {{options}} %s
 Options:
-  [-d|--debug]                                 Enables debug mode, showing every executed statement.
-  [-h|--help]                                  Prints usage (this text).%s
+  [-d|--debug]                 Enables debug mode, showing every executed statement.
+  [-h|--help]                  Prints usage (this text).%s
 " "$(basename "${0}")" "${arguments}" "${ARGUMENTS}"
 }
 
@@ -50,3 +50,12 @@ while (( i <= ${#} )); do
   '-h'|'--help') printUsage; exit 0 ;;
   esac; i=$(( i + 1 ))
 done
+
+function additional {
+  local additional_arguments=
+  case $- in
+    *x* ) additional_arguments+=" -d";;
+    * )   ;;
+  esac
+  printf "%s" "${additional_arguments}"
+}

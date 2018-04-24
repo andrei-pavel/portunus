@@ -28,7 +28,7 @@ done
 #------------------------------------------------------------------------------#
 
 # Add `pkg` to the list in `./install` if it has a standalone `.yaml`
-# configuration file (e.g. `pacman` does, `yaourt` doesn't since it uses
+# configuration file (e.g. `pacman` does, `yay` doesn't since it uses
 # `pacman`'s).
 package_managers=$(cat <<EOF
 apt

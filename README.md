@@ -4,7 +4,7 @@ the script that keeps a consistent state of installed packages across **ALL** Li
 
 Tests [![Build status](https://circleci.com/gh/andrei-pavel/curate-pkg.svg?style=svg)](https://circleci.com/gh/andrei-pavel/curate-pkg) for ArchLinux & Debian.
 
-Version 1.63
+Version 1.64
 
 
 ## Table of Contents
@@ -34,11 +34,9 @@ Supported package managers:
 - `go`
 - `nix`
 - `npm`
-- `pacaur`
-- `pacman`
+- `pacman` along with all [active AUR helpers](https://wiki.archlinux.org/index.php/AUR_helpers#Active)
 - `pip`
 - `snap`
-- `yaourt`
 
 [Request yours today!](https://github.com/andrei-pavel/curate-pkg/issues/new)
 
@@ -48,7 +46,7 @@ Supported package managers:
 ### Using the AUR
 
 ```sh
-yaourt --aur -Syyu curate-pkg-git
+yay --aur -Syyu curate-pkg-git
 ```
 
 ### Manual
@@ -88,11 +86,9 @@ Samples:
 - `go`: [go.yaml](share/samples/go.yaml)
 - `nix`: [nix.yaml](share/samples/nix.yaml)
 - `npm`: [npm.yaml](share/samples/npm.yaml)
-- `pacaur`: uses `pacman.yaml`
 - `pacman`: [pacman.yaml](share/samples/pacman.yaml)
 - `pip`: [pip.yaml](share/samples/pip.yaml)
 - `snap`: [snap.yaml](share/samples/snap.yaml)
-- `yaourt`: uses `pacman.yaml`
 
 
 ## Usage
@@ -126,9 +122,8 @@ If, however, you wish to add support for a package manager, either create an iss
 1. `cp share/empty.sh share/packages-managers/pkg.sh`
 2. Implement all functions in `share/packages-managers/pkg.sh`.
 3. Add `pkg` to `./curate-pkg` in the main list or optional list accordingly. If it is the default package manager in any distribution it is main, else it is optional.
-4. Add `pkg` to the list in `./install` if it has a standalone `.yaml` configuration file (e.g. `pacman` does, `yaourt` doesn't since it uses `pacman`'s).
-5. Add your `pkg.yaml` configuration file to `./share/samples`.
-6. Add `pkg` to `README.md`.
+4. If `pkg` has a standalone `.yaml` configuration file (e.g. `pacman` does, `yay` doesn't since it uses `pacman`'s), add it in `./install` script. Add your `pkg.yaml` configuration file to `./share/samples` as well.
+5. Add `pkg` to `README.md`.
 
 In any case, bump the version in the README.md and in the code where `-V|--version` is handled by setting it to `1.$(( $(git rev-list --count master) + 1 ))`
 

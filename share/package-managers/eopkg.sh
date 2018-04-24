@@ -6,53 +6,53 @@
 source_files=""
 config="${HOME}/.config/curate-pkg/eopkg.yaml"
 
-function check_package_() {
+function check_package_ {
   local package="${1}"
   eopkg info | grep "${package}"
   return "${?}"
 }
 
-function add_key_() {
+function add_key_ {
   local key="${1}"
   true
   return "${?}"
 }
 
-function add_repository_() {
+function add_repository_ {
   local repository="${1}"
   eopkg add-repo -y "${repository}"
   return "${?}"
 }
 
-function add_source_() {
+function add_source_ {
   local source="${1}"
   true
   return "${?}"
 }
 
-function cleanup_added_sources_() {
+function cleanup_added_sources_ {
   true
   return "${?}"
 }
 
-function install_() {
+function install_ {
   local package="${1}"
   eopkg install -y "${package}"
   return "${?}"
 }
 
-function purge_() {
+function purge_ {
   local package="${1}"
   eopkg remove -y "${package}"
   return "${?}"
 }
 
-function update_() {
+function update_ {
   eopkg update-repo -y
   return "${?}"
 }
 
-function upgrade_() {
+function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
     eopkg upgrade -y
     return "${?}"
@@ -63,17 +63,17 @@ function upgrade_() {
   return "${?}"
 }
 
-function autoremove_() {
+function autoremove_ {
   true
   return "${?}"
 }
 
-function upgrade_os_() {
+function upgrade_os_ {
   true
   return "${?}"
 }
 
-function manual_install_() {
+function manual_install_ {
   true
   return "${?}"
 }

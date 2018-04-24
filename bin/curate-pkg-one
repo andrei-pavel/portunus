@@ -61,7 +61,7 @@ done
 #------------------------------------------------------------------------------#
 
 # Traps
-function cleanup() {
+function cleanup {
   ${cleanup_added_sources}
   spinner_end 0 &> /dev/null
 }
@@ -69,7 +69,7 @@ for t in HUP INT QUIT ABRT KILL ALRM TERM; do
   trap "return_code=\${?}; trap - EXIT; printf \"${t} %s\\n\" \"\${return_code}\" 1>&2" ${t}
 done
 
-function printHeader() {
+function printHeader {
   local title
   local column_count
   local hash_count
@@ -91,50 +91,50 @@ function printHeader() {
   printf '\n'
 }
 
-function spinner_begin() {
+function spinner_begin {
   local message="${1}"
   if [[ "${-}" != *x* ]]; then
     start_spinner "${message}"
   fi
 }
 
-function spinner_end() {
+function spinner_end {
   if [[ "${-}" != *x* ]]; then
     stop_spinner 0
   fi
 }
 
-function install_function() {
+function install_function {
   local package="${1}"
   eval "install_ \"${package}\" ${verbose}" || true
   installed_packages+=("${package}")
 }
 
-function add_key_function() {
+function add_key_function {
   local key="${1}"
   eval "wget -q -O - \"${key}\" | add_key_ - ${verbose}"
   added_keys+=("${key}")
 }
 
-function purge_function() {
+function purge_function {
   local package="${1}"
   eval "purge_ \"${package}\" ${verbose}"
   purged_packages+=("${package}")
 }
 
-function add_repository_function() {
+function add_repository_function {
   local repository="${1}"
   eval "add_repository_ \"${repository}\" ${verbose}" || true
   added_repositories+=("${repository}")
 }
 
-function add_source_function() {
+function add_source_function {
   local source="${1}"
   eval "add_source_ \"${source}\" ${verbose}"
   added_sources+=("${source}")
 }
 
-function upgrade_function() {
+function upgrade_function {
   local package="${1}"
   eval "upgrade_ ${package} ${verbose}"
   upgraded_packages+=("${package}")

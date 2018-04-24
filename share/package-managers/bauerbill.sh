@@ -3,12 +3,12 @@
 # Copyright (C) 2017-2018 Andrei Pavel, andrei.pavel@cti.pub.ro
 # Licensed under the MIT License
 
-source_files=
-config="${HOME}/.config/curate-pkg/dnf.yaml"
+source_files=""
+config="${HOME}/.config/curate-pkg/pacman.yaml"
 
 function check_package_ {
   local package="${1}"
-  false
+  pacman -Qi "${package}" || pacman -Qg "${package}"
   return "${?}"
 }
 
@@ -37,34 +37,37 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  dnf install -y "${package}"
+  bauerbill -Syy --aur --force --needed --noconfirm "${package}"
   return "${?}"
 }
 
 function purge_ {
   local package="${1}"
-  dnf remove -y "${package}"
+  bauerbill -Rsc --noconfirm "${package}"
   return "${?}"
 }
 
 function update_ {
-  dnf update -y
+  bauerbill -U --aur --force --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    dnf dist-upgrade -y
+    bauerbill -Su --aur --force --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  dnf dist-upgrade -y "${package}"
+  bauerbill -Su --force --needed --noconfirm "${package}"
   return "${?}"
 }
 
 function autoremove_ {
-  dnf-autoremove -y
+  to_be_removed=$(bauerbill -Qtd --aur --noconfirm 2>&1 | cut -d ' ' -f 1 | cut -d '/' -f 2 | head -n -3)
+  if [[ ! -z ${to_be_removed} ]]; then
+    echo "${to_be_removed}" | xargs bauerbill -Rsc --noconfirm
+  fi
   return "${?}"
 }
 
@@ -74,7 +77,8 @@ function upgrade_os_ {
 }
 
 function manual_install_ {
-  true
+  local package="${1}"
+  bauerbill -Sq --force --noconfirm "${package}"
   return "${?}"
 }
 
