@@ -4,7 +4,7 @@ the script that keeps a consistent state of installed packages across **ALL** Li
 
 Tests [![Build status](https://circleci.com/gh/andrei-pavel/curate-pkg.svg?style=svg)](https://circleci.com/gh/andrei-pavel/curate-pkg) for ArchLinux & Debian.
 
-Version 1.66
+Version 1.67
 
 
 ## Table of Contents

@@ -56,7 +56,7 @@ pushd "${SCRIPT_PATH}" 1> /dev/null
 
   # Install yq if not already installed.
   if ! command -v yq &> /dev/null; then
-    pip install ./yq-2.3.4-py2.py3-none-any.whl
+    pip install ./yq-2.6.0-py2.py3-none-any.whl
   fi
 }
 popd 1> /dev/null
