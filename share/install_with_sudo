@@ -11,7 +11,7 @@ PATH="${PATH}:${SCRIPT_PATH}"
 ARGUMENTS="\
   [-p|--prefix] \$prefix        sets the \${pkgdir} used for AUR PKGBUILD
 "
-. "${SCRIPT_PATH}/../bin/lib/header"
+. "${SCRIPT_PATH}/curate-pkg/lib/header"
 
 # Parse arguments.
 pkgdir=
@@ -37,7 +37,7 @@ pushd "${SCRIPT_PATH}" 1> /dev/null
   mkdir -p "${pkgdir}/usr/local/share/curate-pkg/samples"
   mkdir -p "${pkgdir}/usr/local/share/curate-pkg/lib"
   mkdir -p "${pkgdir}/usr/local/share/curate-pkg/package-managers"
-  install ../bin/lib/* "${pkgdir}/usr/local/share/curate-pkg/lib"
+  install ./curate-pkg/lib/* "${pkgdir}/usr/local/share/curate-pkg/lib"
   install ./*.yaml "${pkgdir}/usr/local/share/curate-pkg"
   install ./package-managers/*.sh "${pkgdir}/usr/local/share/curate-pkg/package-managers"
   install ./samples/* "${pkgdir}/usr/local/share/curate-pkg/samples"
@@ -54,9 +54,14 @@ pushd "${SCRIPT_PATH}" 1> /dev/null
   mkdir -p "${bash_completions}"
   install ./bash-completion "${bash_completions}"
 
+  # Install unp if not already installed.
+  if ! command -v unp &> /dev/null; then
+    install ./dependencies/unp
+  fi
+
   # Install yq if not already installed.
   if ! command -v yq &> /dev/null; then
-    pip install ./yq-2.6.0-py2.py3-none-any.whl
+    pip install ./dependencies/yq-2.6.0-py2.py3-none-any.whl
   fi
 }
 popd 1> /dev/null

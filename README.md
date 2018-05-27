@@ -1,10 +1,16 @@
 # curate-pkg
 
-the script that keeps a consistent state of installed packages across **ALL** Linux package managers and distributions
+Aggregates **ALL** package managers under one tool. If your package manager is not in here, I'll add it and it'll be in testing state in 24 hours.
+
+**How it works**: You keep `.yaml` config files for any of your package managers. They instruct the tool what packages to install/remove.
+Some packages can only be installed through additional sources. They are also specified in the config file and are added on relevant actions.
+Run `--help` to see all actions.
+Empty config files are installed automatically if not already there. You keep them synced through Dropbox/git/rclone/USB or your favourite method.
 
 Tests [![Build status](https://circleci.com/gh/andrei-pavel/curate-pkg.svg?style=svg)](https://circleci.com/gh/andrei-pavel/curate-pkg) for ArchLinux & Debian.
+This is currently a home-grown project. Will invest in continus integration and more features when it gains interest.
 
-Version 1.67
+Version 1.68
 
 
 ## Table of Contents
@@ -22,8 +28,20 @@ Version 1.67
 ## Introduction
 
 What fits you best?
-- **frequent distro-hopping?** Install your favourite music player and that awesome tinker tool that you love with one script run.
-- **determined distro-hugging?** Update all your packages ~~and get detailed information about what was updated~~ `(TODO)` with one command or background service.
+- **frequent distro-hopping?** Install all your favourite packages after a hop with one run of `curate-pkg`.
+- **determined distro-hugging?** Update all your packages and get detailed information about what was updated each time with one run of `curate-pkg`.
+In the latter case, it's very useful to set it up as a systemd service `curate-pkg-daily.service`:
+```
+[Unit]
+Description=curate-pkg-daily
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/curate-pkg
+
+[Install]
+WantedBy=multi-user.target
+`````
 
 Supported package managers:
 - `apt`
@@ -60,15 +78,16 @@ cd curate-pkg
 
 ## Dependencies
 
-- [yq](https://github.com/kislyuk/yq) (`2.3.4` or newer) - used for processing YAML configuration files, installed automagically through `./install` if you don't already have it.
-- [bash-spinner](https://github.com/tlatsas/bash-spinner) - shamelessly copied in this repository, installed automagically through `./install`
-- [unp](https://github.com/mitsuhiko/unp) - for `wgetables`, could you please install it manually?
+Installed automagically:
+- [yq](https://github.com/kislyuk/yq) (`2.3.4` or newer) - used for processing YAML configuration files
+- [bash-spinner](https://github.com/tlatsas/bash-spinner) - shamelessly copied and improved in this repository
+- [unp](https://github.com/mitsuhiko/unp) - for `wgetables` (see `.yaml` files)
 
 
 ## Configuration
 
 Configuration files are one per main package manager.<br/>
-After installing, edit `~/.config/curate-pkg/<main_package_manager>.yaml`.
+After first installation, edit `~/.config/curate-pkg/<main_package_manager>.yaml` to your own needs.
 
 - `installables` are packages to be installed.
 - `wgetables` are downloadable URLs to be installed via it's specific package manager or extracted to `/usr/local`.
@@ -111,12 +130,15 @@ Arguments:
   $package_manager                             Run only for this specific package manager.
 ```
 
-Start by running `curate-pkg` everyday to keep all your packages up to date. Then experiment with other options. Terminology in the help section is based on `apt` because it is the more complex than most.
+Start by running `curate-pkg` everyday to keep all your packages up to date.
+Then experiment with other options.
+Terminology in the help section is based on `apt` because it is more complex than most.
 
 
 ## Contributing
 
-For changes to the package manager engine, you only need to know [bash](http://books.goalkicker.com/BashBook) and try to respect portability best practices. If you add a new argument, add it to the print usage function, the bash completions file and README.md.<br/>
+For changes to the package manager engine, you only need to know [bash](http://books.goalkicker.com/BashBook) and try to respect portability best practices.
+If you add a new argument, add it to the print usage function, the bash completions file and README.md.<br/>
 If, however, you wish to add support for a package manager, either create an issue, or follow these steps given for `pkg` as said package manager:<br/>
 
 1. `cp share/empty.sh share/packages-managers/pkg.sh`

@@ -11,7 +11,7 @@ PATH="${PATH}:${SCRIPT_PATH}"
 ARGUMENTS="\
   [-p|--prefix] \$prefix        sets the \${pkgdir} used for AUR PKGBUILD
 "
-. "${SCRIPT_PATH}/bin/lib/header"
+. "${SCRIPT_PATH}/share/curate-pkg/lib/header"
 
 # Parse arguments.
 pkgdir=
