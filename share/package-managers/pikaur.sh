@@ -37,7 +37,7 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  pikaur -Syy --aur --force --needed --noconfirm "${package}"
+  pikaur -Syy --aur --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,18 +48,18 @@ function purge_ {
 }
 
 function update_ {
-  pikaur -U --aur --force --needed --noconfirm
+  pikaur -U --aur --overwrite '*' --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    pikaur -Su --aur --force --needed --noconfirm
+    pikaur -Su --aur --overwrite '*' --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  pikaur -Su --force --needed --noconfirm "${package}"
+  pikaur -Su --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -78,7 +78,7 @@ function upgrade_os_ {
 
 function manual_install_ {
   local package="${1}"
-  pikaur -Sq --force --noconfirm "${package}"
+  pikaur -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
 

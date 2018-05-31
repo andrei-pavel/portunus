@@ -37,7 +37,7 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  bauerbill -Syy --aur --force --needed --noconfirm "${package}"
+  bauerbill -Syy --aur --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,18 +48,18 @@ function purge_ {
 }
 
 function update_ {
-  bauerbill -U --aur --force --needed --noconfirm
+  bauerbill -U --aur --overwrite '*' --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    bauerbill -Su --aur --force --needed --noconfirm
+    bauerbill -Su --aur --overwrite '*' --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  bauerbill -Su --force --needed --noconfirm "${package}"
+  bauerbill -Su --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -78,7 +78,7 @@ function upgrade_os_ {
 
 function manual_install_ {
   local package="${1}"
-  bauerbill -Sq --force --noconfirm "${package}"
+  bauerbill -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
 

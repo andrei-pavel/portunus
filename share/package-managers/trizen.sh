@@ -37,7 +37,7 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  trizen -Syy --aur --force --needed --noconfirm "${package}"
+  trizen -Syy --aur --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,18 +48,18 @@ function purge_ {
 }
 
 function update_ {
-  trizen -U --aur --force --needed --noconfirm
+  trizen -U --aur --overwrite '*' --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    trizen -Su --aur --force --needed --noconfirm
+    trizen -Su --aur --overwrite '*' --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  trizen -Su --force --needed --noconfirm "${package}"
+  trizen -Su --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -78,7 +78,7 @@ function upgrade_os_ {
 
 function manual_install_ {
   local package="${1}"
-  trizen -Sq --force --noconfirm "${package}"
+  trizen -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
 

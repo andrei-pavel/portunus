@@ -37,7 +37,7 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  auracle -Syy --aur --force --needed --noconfirm "${package}"
+  auracle -Syy --aur --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,18 +48,18 @@ function purge_ {
 }
 
 function update_ {
-  auracle -U --aur --force --needed --noconfirm
+  auracle -U --aur --overwrite '*' --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    auracle -Su --aur --force --needed --noconfirm
+    auracle -Su --aur --overwrite '*' --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  auracle -Su --force --needed --noconfirm "${package}"
+  auracle -Su --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -78,7 +78,7 @@ function upgrade_os_ {
 
 function manual_install_ {
   local package="${1}"
-  auracle -Sq --force --noconfirm "${package}"
+  auracle -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
 

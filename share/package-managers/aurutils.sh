@@ -37,7 +37,7 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  aurutils -Syy --aur --force --needed --noconfirm "${package}"
+  aurutils -Syy --aur --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,18 +48,18 @@ function purge_ {
 }
 
 function update_ {
-  aurutils -U --aur --force --needed --noconfirm
+  aurutils -U --aur --overwrite '*' --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    aurutils -Su --aur --force --needed --noconfirm
+    aurutils -Su --aur --overwrite '*' --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  aurutils -Su --force --needed --noconfirm "${package}"
+  aurutils -Su --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -78,7 +78,7 @@ function upgrade_os_ {
 
 function manual_install_ {
   local package="${1}"
-  aurutils -Sq --force --noconfirm "${package}"
+  aurutils -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
 

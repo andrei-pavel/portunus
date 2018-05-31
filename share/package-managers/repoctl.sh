@@ -37,7 +37,7 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  repoctl -Syy --aur --force --needed --noconfirm "${package}"
+  repoctl -Syy --aur --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,18 +48,18 @@ function purge_ {
 }
 
 function update_ {
-  repoctl -U --aur --force --needed --noconfirm
+  repoctl -U --aur --overwrite '*' --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    repoctl -Su --aur --force --needed --noconfirm
+    repoctl -Su --aur --overwrite '*' --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  repoctl -Su --force --needed --noconfirm "${package}"
+  repoctl -Su --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -78,7 +78,7 @@ function upgrade_os_ {
 
 function manual_install_ {
   local package="${1}"
-  repoctl -Sq --force --noconfirm "${package}"
+  repoctl -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
 

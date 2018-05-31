@@ -37,7 +37,7 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  yay -Syy --aur --force --needed --noconfirm "${package}"
+  yay -Syy --aur --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,18 +48,18 @@ function purge_ {
 }
 
 function update_ {
-  yay -U --aur --force --needed --noconfirm
+  yay -U --aur --overwrite '*' --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    yay -Su --aur --force --needed --noconfirm
+    yay -Su --aur --overwrite '*' --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  yay -Su --force --needed --noconfirm "${package}"
+  yay -Su --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -78,7 +78,7 @@ function upgrade_os_ {
 
 function manual_install_ {
   local package="${1}"
-  yay -Sq --force --noconfirm "${package}"
+  yay -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
 

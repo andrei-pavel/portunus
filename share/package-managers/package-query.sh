@@ -37,7 +37,7 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  package-query -Syy --aur --force --needed --noconfirm "${package}"
+  package-query -Syy --aur --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,18 +48,18 @@ function purge_ {
 }
 
 function update_ {
-  package-query -U --aur --force --needed --noconfirm
+  package-query -U --aur --overwrite '*' --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    package-query -Su --aur --force --needed --noconfirm
+    package-query -Su --aur --overwrite '*' --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  package-query -Su --force --needed --noconfirm "${package}"
+  package-query -Su --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -78,7 +78,7 @@ function upgrade_os_ {
 
 function manual_install_ {
   local package="${1}"
-  package-query -Sq --force --noconfirm "${package}"
+  package-query -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
 

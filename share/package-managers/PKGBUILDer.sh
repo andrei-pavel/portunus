@@ -37,7 +37,7 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  PKGBUILDer -Syy --aur --force --needed --noconfirm "${package}"
+  PKGBUILDer -Syy --aur --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,18 +48,18 @@ function purge_ {
 }
 
 function update_ {
-  PKGBUILDer -U --aur --force --needed --noconfirm
+  PKGBUILDer -U --aur --overwrite '*' --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    PKGBUILDer -Su --aur --force --needed --noconfirm
+    PKGBUILDer -Su --aur --overwrite '*' --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  PKGBUILDer -Su --force --needed --noconfirm "${package}"
+  PKGBUILDer -Su --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -78,7 +78,7 @@ function upgrade_os_ {
 
 function manual_install_ {
   local package="${1}"
-  PKGBUILDer -Sq --force --noconfirm "${package}"
+  PKGBUILDer -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
 

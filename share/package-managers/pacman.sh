@@ -37,7 +37,7 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  pacman -Syy --force --needed --noconfirm "${package}"
+  pacman -Syy --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,18 +48,18 @@ function purge_ {
 }
 
 function update_ {
-  pacman -Sy --force --needed --noconfirm
+  pacman -Sy --overwrite '*' --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    pacman -Su --force --needed --noconfirm
+    pacman -Su --overwrite '*' --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  pacman -Su --force --needed --noconfirm "${package}"
+  pacman -Su --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -78,7 +78,7 @@ function upgrade_os_ {
 
 function manual_install_ {
   local package="${1}"
-  pacman -Sq --force --noconfirm "${package}"
+  pacman -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
 

@@ -37,7 +37,7 @@ function cleanup_added_sources_ {
 
 function install_ {
   local package="${1}"
-  naaman -Syy --aur --force --needed --noconfirm "${package}"
+  naaman -Syy --aur --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -48,18 +48,18 @@ function purge_ {
 }
 
 function update_ {
-  naaman -U --aur --force --needed --noconfirm
+  naaman -U --aur --overwrite '*' --needed --noconfirm
   return "${?}"
 }
 
 function upgrade_ {
   if [[ ${#} -eq 0 ]]; then
-    naaman -Su --aur --force --needed --noconfirm
+    naaman -Su --aur --overwrite '*' --needed --noconfirm
     return "${?}"
   fi
 
   local package="${1}"
-  naaman -Su --force --needed --noconfirm "${package}"
+  naaman -Su --overwrite '*' --needed --noconfirm "${package}"
   return "${?}"
 }
 
@@ -78,7 +78,7 @@ function upgrade_os_ {
 
 function manual_install_ {
   local package="${1}"
-  naaman -Sq --force --noconfirm "${package}"
+  naaman -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
 
