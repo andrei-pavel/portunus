@@ -152,7 +152,6 @@ In any case, bump the version in the README.md and in the code where `-V|--versi
 Thank you for your contribution!
 
 
-## Support the developer
+## Support the maintainer
 
-<script src="https://liberapay.com/andrei/widgets/button.js"></script>
 <noscript><a href="https://liberapay.com/andrei/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
