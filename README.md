@@ -150,3 +150,9 @@ If, however, you wish to add support for a package manager, either create an iss
 In any case, bump the version in the README.md and in the code where `-V|--version` is handled by setting it to `1.$(( $(git rev-list --count master) + 1 ))`
 
 Thank you for your contribution!
+
+
+## Support the developer
+
+<script src="https://liberapay.com/andrei/widgets/button.js"></script>
+<noscript><a href="https://liberapay.com/andrei/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
