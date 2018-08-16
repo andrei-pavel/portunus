@@ -10,7 +10,7 @@ Empty config files are installed automatically if not already there. You keep th
 Tests [![Build status](https://circleci.com/gh/andrei-pavel/curate-pkg.svg?style=svg)](https://circleci.com/gh/andrei-pavel/curate-pkg) for ArchLinux & Debian.
 This is currently a home-grown project. Will invest in continus integration and more features when it gains interest.
 
-Version 1.71
+Version 1.72
 
 
 ## Table of Contents
