@@ -20,6 +20,7 @@ ARGUMENTS="\
   \$package_manager                   Run only for this specific package manager.
 "
 . "${SCRIPT_PATH}/../share/curate-pkg/lib/header"
+. "${SCRIPT_PATH}/../share/curate-pkg/lib/spinner"
 . "${SCRIPT_PATH}/../share/curate-pkg/lib/utils"
 
 # Parse arguments.
