@@ -56,12 +56,12 @@ pushd "${SCRIPT_PATH}" 1> /dev/null
 
   # Install unp if not already installed.
   if ! command -v unp &> /dev/null; then
-    install ./share/dependencies/unp "${pkgdir}/usr/local/bin"
+    install ./dependencies/unp "${pkgdir}/usr/local/bin"
   fi
 
   # Install yq if not already installed.
   if ! command -v yq &> /dev/null; then
-    pip install ./share/dependencies/yq-2.7.0-py2.py3-none-any.whl
+    pip install ./dependencies/yq-2.7.0-py2.py3-none-any.whl
   fi
 }
 popd 1> /dev/null
