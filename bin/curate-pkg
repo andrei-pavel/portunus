@@ -3,10 +3,6 @@
 # Copyright (C) 2017-2018 Andrei Pavel, andrei.pavel@cti.pub.ro
 # Licensed under the MIT License
 
-# Get script path and append it to PATH so other scripts are callable.
-SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
-PATH="${PATH}:${SCRIPT_PATH}"
-
 # Header
 ARGUMENTS="\
   [-a|--auto]                                  Cool continuous curation
@@ -20,6 +16,7 @@ ARGUMENTS="\
   [-V|--version]                               Display version and exit.
   \$package_manager                             Run only for this specific package manager.
 "
+SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
 . "${SCRIPT_PATH}/../share/curate-pkg/lib/header"
 . "${SCRIPT_PATH}/../share/curate-pkg/lib/utils"
 
