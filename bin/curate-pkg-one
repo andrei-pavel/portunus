@@ -21,14 +21,7 @@ SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
 . "${SCRIPT_PATH}/../share/curate-pkg/lib/utils"
 
 # Parse arguments.
-package_manager=
 verbose="&> /dev/null"
-add_key_item=
-add_repository_item=
-add_source_item=
-install_item=
-purge_item=
-upgrade_item=
 explicit=false
 while (( ${#} > 0 )); do
   case "${1}" in
@@ -50,9 +43,9 @@ while (( ${#} > 0 )); do
   '-w'|'--wget') shift && wget_item="${1}" && explicit=true ;;
   *)
     # \$package_manager                   Run only for this specific package manager.
-    [[ -z "${package_manager}" ]] && package_manager="${1}" && shift && continue
+    [[ -z "${package_manager+x}" ]] && package_manager="${1}" && shift && continue
     # Unrecognized argument
-    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; printUsage; exit 1 ;;
+    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; print-usage; exit 1 ;;
   esac; shift
 done
 
@@ -92,13 +85,13 @@ function printHeader {
 function spinner_begin {
   local message="${1}"
   if [[ "${-}" != *x* ]]; then
-    start_spinner "${message}"
+    start-spinner "${message}"
   fi
 }
 
 function spinner_end {
   if [[ "${-}" != *x* ]]; then
-    stop_spinner 0
+    stop-spinner 0
   fi
 }
 
@@ -180,7 +173,7 @@ fi
 spinner_begin "Adding keys..."
 added_keys=()
 if ${explicit}; then
-  if [[ ! -z ${add_key_item} ]]; then
+  if [[ ! -z "${add_key_item+x}" ]]; then
     add_key_function "${add_key_item}"
   fi
 else
@@ -189,7 +182,7 @@ else
   done
 fi
 spinner_end
-[[ ! -z "${added_keys[@]}" ]] && printf "${GREEN}Added keys: %s${RESET}\n" "${added_keys[@]}"
+[[ ! -z "${added_keys[@]+x}" ]] && printf "${GREEN}Added keys: %s${RESET}\n" "${added_keys[@]}"
 
 spinner_begin "Adding repositories..."
 added_repositories=()
@@ -197,27 +190,27 @@ for repository in ${repositories[@]}; do
   add_repository_function "${repository}"
 done
 spinner_end
-[[ ! -z "${added_repositories[@]}" ]] && printf "${GREEN}Added repositories: %s${RESET}\n" "${added_repositories[@]}"
+[[ ! -z "${added_repositories[@]+x}" ]] && printf "${GREEN}Added repositories: %s${RESET}\n" "${added_repositories[@]}"
 
 spinner_begin "Adding sources..."
 added_sources=()
 eval "cleanup_added_sources_ ${verbose}"
 for src in "${sources[@]}"; do
   protocolless_src=$(echo "${src}" | cut -d '/' -f 3-)
-  if [[ ! -z ${source_files} ]]; then
+  if [[ ! -z "${source_files+x}" ]]; then
     if ! /bin/grep -F "$(echo "${protocolless_src}")" ${source_files} &> /dev/null; then
       add_source_function "${source}"
     fi
   fi
 done
 spinner_end
-[[ ! -z "${added_sources[@]}" ]] && printf "${GREEN}Added sources: %s${RESET}\n" "${added_sources[@]}"
+[[ ! -z "${added_sources[@]+x}" ]] && printf "${GREEN}Added sources: %s${RESET}\n" "${added_sources[@]}"
 
 spinner_begin "Updating repositories..."
 updated_repositories=()
 eval "update_ ${verbose}" || true
 spinner_end
-[[ ! -z "${updated_repositories[@]}" ]] && printf "${GREEN}Updated repositories: %s${RESET}\n" "${updated_repositories[@]}"
+[[ ! -z "${updated_repositories[@]+x}" ]] && printf "${GREEN}Updated repositories: %s${RESET}\n" "${updated_repositories[@]}"
 
 spinner_begin "Installing..."
 installed_packages=()
@@ -231,7 +224,7 @@ for package in ${installables[@]}; do
   fi
 done
 spinner_end
-[[ ! -z "${installed_packages[@]}" ]] && printf "${GREEN}Installed packages: %s${RESET}\n" "${installed_packages[@]}"
+[[ ! -z "${installed_packages[@]+x}" ]] && printf "${GREEN}Installed packages: %s${RESET}\n" "${installed_packages[@]}"
 
 spinner_begin "wgetting..."
 wgot_packages=()
@@ -257,7 +250,7 @@ for wget in ${wgetables[@]}; do
   wgot_packages+=("${wget}")
 done
 spinner_end
-[[ ! -z "${wgot_packages[@]}" ]] && printf "${GREEN}wgot packages: %s${RESET}\n" "${wgot_packages[@]}"
+[[ ! -z "${wgot_packages[@]+x}" ]] && printf "${GREEN}wgot packages: %s${RESET}\n" "${wgot_packages[@]}"
 
 spinner_begin "Purging..."
 purged_packages=()
@@ -271,19 +264,19 @@ for package in ${purgeables[@]}; do
   fi
 done
 spinner_end
-[[ ! -z "${purged_packages[@]}" ]] && printf "${GREEN}Purged packages: %s${RESET}\n" "${purged_packages[@]}"
+[[ ! -z "${purged_packages[@]+x}" ]] && printf "${GREEN}Purged packages: %s${RESET}\n" "${purged_packages[@]}"
 
 spinner_begin "Upgrading..."
 upgraded_packages=()
 if ${explicit}; then
-  if [[ ! -z ${upgrade_item} ]]; then
+  if [[ ! -z "${upgrade_item+x}" ]]; then
     upgrade_function ${upgrade_item}
   fi
 else
   upgrade_function
 fi
 spinner_end
-[[ ! -z "${upgraded_packages[@]}" ]] && printf "${GREEN}Upgraded packages: %s${RESET}\n" "${upgraded_packages[@]}"
+[[ ! -z "${upgraded_packages[@]+x}" ]] && printf "${GREEN}Upgraded packages: %s${RESET}\n" "${upgraded_packages[@]}"
 
 if ! ${explicit}; then
   spinner_begin "Running custom commands..."

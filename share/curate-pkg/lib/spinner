@@ -5,8 +5,9 @@
 #
 # Warning! Nested spinners are not supported.
 
-[[ ! -z ${_LIB_SPINNER_INCLUDED+x} ]] && return 0
-_LIB_SPINNER_INCLUDED=true
+# Source guard
+[[ ! -z "${_LIB_SPINNER_SOURCED+x}" ]] && return 0
+_LIB_SPINNER_SOURCED=true
 
 . "$(dirname "${BASH_SOURCE[0]}")/traps"
 
@@ -21,9 +22,19 @@ _spinner_cycle=(
 _spinner_period='0.15s'
 
 if command -v tput &> /dev/null; then
-  function _tput() {
-    tput "${@}"
-  }
+  if tput cvvis &> /dev/null; then
+    function _tput() {
+      tput "${@}"
+    }
+  elif tput -T 'xterm' cvvis &> /dev/null; then
+    function _tput() {
+      tput -T 'xterm' "${@}"
+    }
+  else
+    function _tput() {
+      :
+    }
+  fi
 else
   function _tput() {
     :
@@ -56,7 +67,7 @@ function _spinner {
 
     stop)
       _tput cvvis
-      [[ -z ${_spinner_pid+x} ]] && return 1
+      [[ -z "${_spinner_pid+x}" ]] && return 1
       kill "${_spinner_pid}" > /dev/null 2>&1
       if [[ ${2} = 0 ]]; then
         status="${GREEN}DONE${RESET}"
@@ -73,8 +84,8 @@ function _spinner {
   esac
 }
 
-function start_spinner() {
-  if [[ ${-} = *x* || ! -z ${_spinner_pid+x} ]]; then
+function start-spinner() {
+  if [[ ${-} = *x* || ! -z "${_spinner_pid+x}" ]]; then
     return
   fi
   _message="${1}"
@@ -86,8 +97,8 @@ function start_spinner() {
   disown
 }
 
-function stop_spinner() {
-  if [[ ${-} = *x* || -z ${_spinner_pid+x} ]]; then
+function stop-spinner() {
+  if [[ ${-} = *x* || -z "${_spinner_pid+x}" ]]; then
     return
   fi
   exec 1>&3

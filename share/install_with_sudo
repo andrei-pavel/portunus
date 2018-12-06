@@ -3,14 +3,11 @@
 # Copyright (C) 2017-2018 Andrei Pavel, andrei.pavel@cti.pub.ro
 # Licensed under the MIT License
 
-# Get script path and append it to PATH so other scripts are callable.
-SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
-PATH="${PATH}:${SCRIPT_PATH}"
-
 # Header
 ARGUMENTS="\
   [-p|--prefix] \$prefix        sets the \${pkgdir} used for AUR PKGBUILD
 "
+SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
 . "${SCRIPT_PATH}/curate-pkg/lib/header"
 
 # Parse arguments.
@@ -21,7 +18,7 @@ while (( ${#} > 0 )); do
   '-p'|'--prefix') shift && pkgdir="${1}";;
   *)
     # Unrecognized argument
-    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; printUsage; exit 1;;
+    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; print-usage; exit 1;;
   esac; shift
 done
 

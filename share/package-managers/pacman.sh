@@ -65,7 +65,7 @@ function upgrade_ {
 
 function autoremove_ {
   to_be_removed=$(pacman -Qtd --aur --noconfirm 2>&1 | cut -d ' ' -f 1 | cut -d '/' -f 2 | head -n -3)
-  if [[ ! -z ${to_be_removed} ]]; then
+  if [[ ! -z "${to_be_removed+x}" ]]; then
     echo "${to_be_removed}" | xargs pacman -Rsc --noconfirm
   fi
   return "${?}"

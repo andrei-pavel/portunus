@@ -46,12 +46,12 @@ while (( ${#} > 0 )); do
   # [-v|--verbose]                               Verbose output
   '-v'|'--verbose') additional+=" ${1}" ;;
   # [-V|--version]                               Display version and exit.
-  '-V'|'--version') printf 'v1.88\n' && exit 0 ;;
+  '-V'|'--version') printf 'v1.89\n' && exit 0 ;;
   *)
     # \$package_manager                             Run only for this specific package manager.
-    [[ -z "${explicit_package_manager}" ]] && explicit_package_manager="${1}" && shift && continue
+    [[ -z "${explicit_package_manager+x}" ]] && explicit_package_manager="${1}" && shift && continue
     # Unrecognized argument
-    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; printUsage; exit 1 ;;
+    printf "${RED}ERROR: Unrecognized argument '%s'${RESET}\\n" "${1}" 1>&2; print-usage; exit 1 ;;
   esac; shift
 done
 
@@ -114,7 +114,7 @@ function works_best_non_privileged {
 
 while true; do
   for package_manager in ${package_managers} ${optional_package_managers}; do
-    if ! command -v ${package_manager} 1> /dev/null || [[ ! -z "${explicit_package_manager}" && "${package_manager}" != "${explicit_package_manager}" ]]; then
+    if ! command -v ${package_manager} 1> /dev/null || [[ ! -z "${explicit_package_manager+x}" && "${package_manager}" != "${explicit_package_manager}" ]]; then
       continue
     fi
     found=true
