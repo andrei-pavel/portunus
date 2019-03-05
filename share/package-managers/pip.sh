@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=""
-config="${HOME}/.config/curate-pkg/pip.yaml"
+config="${HOME}/.config/portunus/pip.yaml"
 
 function check_package_ {
   local package="${1}"

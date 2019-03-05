@@ -16,9 +16,9 @@ ARGUMENTS="\
   \$package_manager                   Run only for this specific package manager.
 "
 SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
-. "${SCRIPT_PATH}/../share/curate-pkg/lib/header"
-. "${SCRIPT_PATH}/../share/curate-pkg/lib/spinner"
-. "${SCRIPT_PATH}/../share/curate-pkg/lib/utils"
+. "${SCRIPT_PATH}/../share/portunus/lib/header"
+. "${SCRIPT_PATH}/../share/portunus/lib/spinner"
+. "${SCRIPT_PATH}/../share/portunus/lib/utils"
 
 # Parse arguments.
 verbose="&> /dev/null"
@@ -132,7 +132,7 @@ function upgrade_function {
 }
 
 printHeader ${package_manager}
-source "${SCRIPT_PATH}/../share/curate-pkg/package-managers/${package_manager}.sh"
+source "${SCRIPT_PATH}/../share/portunus/package-managers/${package_manager}.sh"
 if ! command -v yq 1> /dev/null; then
   ${install} yq
 fi

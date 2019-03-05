@@ -8,7 +8,7 @@ ARGUMENTS="\
   [-p|--prefix] \$prefix        sets the \${pkgdir} used for AUR PKGBUILD
 "
 SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
-. "${SCRIPT_PATH}/share/curate-pkg/lib/header"
+. "${SCRIPT_PATH}/share/portunus/lib/header"
 
 # Parse arguments.
 pkgdir=
@@ -43,11 +43,11 @@ EOF
 
 pushd "${SCRIPT_PATH}" > /dev/null
 {
-  mkdir -p ${HOME}/.config/curate-pkg
+  mkdir -p ${HOME}/.config/portunus
   for package_manager in ${package_managers}; do
     if command -v "${package_manager}" &> /dev/null; then
-      if [[ ! -f "${HOME}/.config/curate-pkg/${package_manager}.yaml" ]]; then
-        install "${SCRIPT_PATH}/share/empty.yaml" "${HOME}/.config/curate-pkg/${package_manager}.yaml"
+      if [[ ! -f "${HOME}/.config/portunus/${package_manager}.yaml" ]]; then
+        install "${SCRIPT_PATH}/share/empty.yaml" "${HOME}/.config/portunus/${package_manager}.yaml"
       fi
     fi
   done

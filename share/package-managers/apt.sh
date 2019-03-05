@@ -6,7 +6,7 @@
 mkdir -p "/etc/apt/sources.list.d"
 
 source_files="$(find /etc/apt/sources.list.d -type f)"
-config="${HOME}/.config/curate-pkg/apt.yaml"
+config="${HOME}/.config/portunus/apt.yaml"
 
 function check_package_ {
   local package="${1}"
@@ -28,12 +28,12 @@ function add_repository_ {
 
 function add_source_ {
   local source="${1}"
-  printf "${source}\n" >> /etc/apt/sources.list.d/curate-pkg.list
+  printf "${source}\n" >> /etc/apt/sources.list.d/portunus.list
   return "${?}"
 }
 
 function cleanup_added_sources_ {
-  rm -f /etc/apt/sources.list.d/curate-pkg.list
+  rm -f /etc/apt/sources.list.d/portunus.list
   return "${?}"
 }
 

@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=""
-config="${HOME}/.config/curate-pkg/nix.yaml"
+config="${HOME}/.config/portunus/nix.yaml"
 
 function check_package_ {
   local package="${1}"

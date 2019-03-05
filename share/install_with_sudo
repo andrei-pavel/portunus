@@ -8,7 +8,7 @@ ARGUMENTS="\
   [-p|--prefix] \$prefix        sets the \${pkgdir} used for AUR PKGBUILD
 "
 SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
-. "${SCRIPT_PATH}/curate-pkg/lib/header"
+. "${SCRIPT_PATH}/portunus/lib/header"
 
 # Parse arguments.
 pkgdir=
@@ -29,15 +29,15 @@ pushd "${SCRIPT_PATH}" 1> /dev/null
 {
   # Install.
   mkdir -p "${pkgdir}/usr/local/bin"
-  install ../bin/curate-pkg "${pkgdir}/usr/local/bin"
-  install ../bin/curate-pkg-one "${pkgdir}/usr/local/bin"
-  mkdir -p "${pkgdir}/usr/local/share/curate-pkg/samples"
-  mkdir -p "${pkgdir}/usr/local/share/curate-pkg/lib"
-  mkdir -p "${pkgdir}/usr/local/share/curate-pkg/package-managers"
-  install ./curate-pkg/lib/* "${pkgdir}/usr/local/share/curate-pkg/lib"
-  install ./*.yaml "${pkgdir}/usr/local/share/curate-pkg"
-  install ./package-managers/*.sh "${pkgdir}/usr/local/share/curate-pkg/package-managers"
-  install ./samples/* "${pkgdir}/usr/local/share/curate-pkg/samples"
+  install ../bin/portunus "${pkgdir}/usr/local/bin"
+  install ../bin/portunus-one "${pkgdir}/usr/local/bin"
+  mkdir -p "${pkgdir}/usr/local/share/portunus/samples"
+  mkdir -p "${pkgdir}/usr/local/share/portunus/lib"
+  mkdir -p "${pkgdir}/usr/local/share/portunus/package-managers"
+  install ./portunus/lib/* "${pkgdir}/usr/local/share/portunus/lib"
+  install ./*.yaml "${pkgdir}/usr/local/share/portunus"
+  install ./package-managers/*.sh "${pkgdir}/usr/local/share/portunus/package-managers"
+  install ./samples/* "${pkgdir}/usr/local/share/portunus/samples"
 
   # Install bash_completions.
   set +e
@@ -47,7 +47,7 @@ pushd "${SCRIPT_PATH}" 1> /dev/null
   if (( result != 0 )); then
     bash_completions='/usr/share/bash-completion/completions'
   fi
-  bash_completions="${pkgdir}/${bash_completions}/curate-pkg"
+  bash_completions="${pkgdir}/${bash_completions}/portunus"
   mkdir -p "${bash_completions}"
   install ./bash-completion "${bash_completions}"
 

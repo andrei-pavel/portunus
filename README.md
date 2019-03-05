@@ -1,4 +1,4 @@
-# curate-pkg
+# portunus
 
 Aggregates **ALL** package managers under one tool. If your package manager is not in here, I'll add it and it'll be in testing state in 24 hours.
 
@@ -7,10 +7,10 @@ Some packages can only be installed through additional sources. They are also sp
 Run `--help` to see all actions.
 Empty config files are installed automatically if not already there. You keep them synced through Dropbox/git/rclone/USB or your favourite method.
 
-Tests [![Build status](https://circleci.com/gh/andrei-pavel/curate-pkg.svg?style=svg)](https://circleci.com/gh/andrei-pavel/curate-pkg) for ArchLinux & Debian.
+Tests [![Build status](https://circleci.com/gh/andrei-pavel/portunus.svg?style=svg)](https://circleci.com/gh/andrei-pavel/portunus) for ArchLinux & Debian.
 This is currently a home-grown project. Will invest in continus integration and more features when it gains interest.
 
-Version 1.90
+Version 2.0
 
 
 ## Table of Contents
@@ -28,16 +28,16 @@ Version 1.90
 ## Introduction
 
 What fits you best?
-- **frequent distro-hopping?** Install all your favourite packages after a hop with one run of `curate-pkg`.
-- **determined distro-hugging?** Update all your packages and get detailed information about what was updated each time with one run of `curate-pkg`.
-In the latter case, it's very useful to set it up as a systemd service `curate-pkg-daily.service`:
+- **frequent distro-hopping?** Install all your favourite packages after a hop with one run of `portunus`.
+- **determined distro-hugging?** Update all your packages and get detailed information about what was updated each time with one run of `portunus`.
+In the latter case, it's very useful to set it up as a systemd service `portunus-daily.service`:
 ```
 [Unit]
-Description=curate-pkg-daily
+Description=portunus-daily
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/curate-pkg
+ExecStart=/usr/local/bin/portunus
 
 [Install]
 WantedBy=multi-user.target
@@ -56,7 +56,7 @@ Supported package managers:
 - `pip`
 - `snap`
 
-[Request yours today!](https://github.com/andrei-pavel/curate-pkg/issues/new)
+[Request yours today!](https://github.com/andrei-pavel/portunus/issues/new)
 
 
 ## Installation
@@ -64,14 +64,14 @@ Supported package managers:
 ### Using the AUR
 
 ```sh
-yay --aur -Syyu curate-pkg-git
+yay --aur -Syyu portunus-git
 ```
 
 ### Manual
 
 ```sh
-git clone https://github.com/andrei-pavel/curate-pkg.git
-cd curate-pkg
+git clone https://github.com/andrei-pavel/portunus.git
+cd portunus
 ./install
 ```
 
@@ -87,7 +87,7 @@ Installed automagically:
 ## Configuration
 
 Configuration files are one per main package manager.<br/>
-After first installation, edit `~/.config/curate-pkg/<main_package_manager>.yaml` to your own needs.
+After first installation, edit `~/.config/portunus/<main_package_manager>.yaml` to your own needs.
 
 - `installables` are packages to be installed.
 - `wgetables` are downloadable URLs to be installed via it's specific package manager or extracted to `/usr/local`.
@@ -113,7 +113,7 @@ Samples:
 ## Usage
 
 ```sh
-Usage: curate-pkg {{options}} {{arguments}}
+Usage: portunus {{options}} {{arguments}}
 Options:
   [-d|--debug]                                 Enables debug mode, showing every executed statement.
   [-h|--help]                                  Prints usage (this text).
@@ -130,7 +130,7 @@ Arguments:
   $package_manager                             Run only for this specific package manager.
 ```
 
-Start by running `curate-pkg` everyday to keep all your packages up to date.
+Start by running `portunus` everyday to keep all your packages up to date.
 Then experiment with other options.
 Terminology in the help section is based on `apt` because it is more complex than most.
 
@@ -143,7 +143,7 @@ If, however, you wish to add support for a package manager, either create an iss
 
 1. `cp share/empty.sh share/packages-managers/pkg.sh`
 2. Implement all functions in `share/packages-managers/pkg.sh`.
-3. Add `pkg` to `./curate-pkg` in the main list or optional list accordingly. If it is the default package manager in any distribution it is main, else it is optional.
+3. Add `pkg` to `./portunus` in the main list or optional list accordingly. If it is the default package manager in any distribution it is main, else it is optional.
 4. If `pkg` has a standalone `.yaml` configuration file (e.g. `pacman` does, `yay` doesn't since it uses `pacman`'s), add it in `./install` script. Add your `pkg.yaml` configuration file to `./share/samples` as well.
 5. Add `pkg` to `README.md`.
 

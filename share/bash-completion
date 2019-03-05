@@ -10,5 +10,5 @@ function _curate_pkg {
   return 0
 }
 
-complete -F _curate_pkg curate-pkg
+complete -F _curate_pkg portunus
 

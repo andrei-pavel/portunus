@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=""
-config="${HOME}/.config/curate-pkg/eopkg.yaml"
+config="${HOME}/.config/portunus/eopkg.yaml"
 
 function check_package_ {
   local package="${1}"

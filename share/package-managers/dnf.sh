@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 source_files=
-config="${HOME}/.config/curate-pkg/dnf.yaml"
+config="${HOME}/.config/portunus/dnf.yaml"
 
 function check_package_ {
   local package="${1}"

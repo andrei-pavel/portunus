@@ -17,8 +17,8 @@ ARGUMENTS="\
   \$package_manager                             Run only for this specific package manager.
 "
 SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
-. "${SCRIPT_PATH}/../share/curate-pkg/lib/header"
-. "${SCRIPT_PATH}/../share/curate-pkg/lib/utils"
+. "${SCRIPT_PATH}/../share/portunus/lib/header"
+. "${SCRIPT_PATH}/../share/portunus/lib/utils"
 
 # Parse arguments.
 additional=
@@ -46,7 +46,7 @@ while (( ${#} > 0 )); do
   # [-v|--verbose]                               Verbose output
   '-v'|'--verbose') additional+=" ${1}" ;;
   # [-V|--version]                               Display version and exit.
-  '-V'|'--version') printf 'v1.90\n' && exit 0 ;;
+  '-V'|'--version') printf 'v2.0\n' && exit 0 ;;
   *)
     # \$package_manager                             Run only for this specific package manager.
     [[ -z "${explicit_package_manager+x}" ]] && explicit_package_manager="${1}" && shift && continue
@@ -119,9 +119,9 @@ while true; do
     fi
     found=true
     if (( EUID == 0 )) || works_best_non_privileged ${package_manager}; then
-      curate-pkg-one ${additional} ${package_manager} || true
+      portunus-one ${additional} ${package_manager} || true
     else
-      sudo -H curate-pkg-one ${additional} ${package_manager} || true
+      sudo -H portunus-one ${additional} ${package_manager} || true
     fi
   done
   if ! ${auto}; then
