@@ -8,7 +8,7 @@ ARGUMENTS="\
   [-p|--prefix] \$prefix        sets the \${pkgdir} used for AUR PKGBUILD
 "
 SCRIPT_PATH="$(dirname "$(readlink -f "${0}")")"
-. "${SCRIPT_PATH}/share/portunus/lib/header"
+. "${SCRIPT_PATH}/portunus/lib/header"
 
 # Parse arguments.
 pkgdir=
@@ -24,16 +24,28 @@ done
 
 #------------------------------------------------------------------------------#
 
-pushd "${SCRIPT_PATH}" > /dev/null
-{
-  ./share/install-initial-configuration
+# Add `pkg` to the list in `./install` if it has a standalone `.yaml`
+# configuration file (e.g. `pacman` does, `yay` doesn't since it uses
+# `pacman`'s).
+package_managers="$(cat <<EOF
+apt
+brew
+dnf
+eopkg
+flatpak
+go
+nix
+npm
+pacman
+snap
+EOF
+)"
 
-  if (( EUID == 0 )); then
-    ./share/install-with-sudo -p "${pkgdir}"
-  else
-    sudo ./share/install-initial-configuration
-    # Needs to run as root but keep ${HOME}
-    sudo ./share/install-with-sudo -p "${pkgdir}"
+mkdir -p ${HOME}/.config/portunus
+for package_manager in ${package_managers}; do
+  if command -v "${package_manager}" &> /dev/null; then
+    if [[ ! -f "${HOME}/.config/portunus/${package_manager}.yaml" ]]; then
+      install "${SCRIPT_PATH}/empty.yaml" "${HOME}/.config/portunus/${package_manager}.yaml"
+    fi
   fi
-}
-popd 1> /dev/null
+done
