@@ -41,8 +41,7 @@ snap
 EOF
 )
 
-pushd "${SCRIPT_PATH}" > /dev/null
-{
+function initial-configuration() {
   mkdir -p ${HOME}/.config/portunus
   for package_manager in ${package_managers}; do
     if command -v "${package_manager}" &> /dev/null; then
@@ -51,12 +50,17 @@ pushd "${SCRIPT_PATH}" > /dev/null
       fi
     fi
   done
+}
+
+pushd "${SCRIPT_PATH}" > /dev/null
+{
+  initial-configuration
 
   if (( EUID == 0 )); then
-    ./share/install_with_sudo -p "${pkgdir}"
+    ./share/install-with-sudo -p "${pkgdir}"
   else
     # Needs to run as root but keep ${HOME}
-    sudo -H ./share/install_with_sudo -p "${pkgdir}"
+    sudo -H ./share/install-with-sudo -p "${pkgdir}"
   fi
 }
 popd 1> /dev/null

@@ -105,7 +105,7 @@ yay
 EOF
 )
 
-function works_best_non_privileged {
+function works-best-non-privileged {
   if [[ "${non_privileged_package_managers}" == *${1}* ]]; then
     return 0
   fi
@@ -118,7 +118,7 @@ while true; do
       continue
     fi
     found=true
-    if (( EUID == 0 )) || works_best_non_privileged ${package_manager}; then
+    if (( EUID == 0 )) || works-best-non-privileged ${package_manager}; then
       portunus-one ${additional} ${package_manager} || true
     else
       sudo -H portunus-one ${additional} ${package_manager} || true

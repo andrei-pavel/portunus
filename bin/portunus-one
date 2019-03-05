@@ -52,15 +52,15 @@ done
 #------------------------------------------------------------------------------#
 
 # Traps
-function cleanup {
+function cleanup() {
   ${cleanup_added_sources}
-  spinner_end &> /dev/null
+  stop-spinner ${?} &> /dev/null
 }
 for t in HUP INT QUIT ABRT KILL ALRM TERM; do
   trap "return_code=\${?}; trap - EXIT; printf \"${t} %s\\n\" \"\${return_code}\" 1>&2" ${t}
 done
 
-function printHeader {
+function print-header() {
   local title
   local column_count
   local hash_count
@@ -82,56 +82,43 @@ function printHeader {
   printf '\n'
 }
 
-function spinner_begin {
-  local message="${1}"
-  if [[ "${-}" != *x* ]]; then
-    start-spinner "${message}"
-  fi
-}
-
-function spinner_end {
-  if [[ "${-}" != *x* ]]; then
-    stop-spinner 0
-  fi
-}
-
-function install_function {
+function install-function() {
   local package="${1}"
   eval "install_ \"${package}\" ${verbose}" || true
   installed_packages+=("${package}")
 }
 
-function add_key_function {
+function add-key-function() {
   local key="${1}"
   eval "wget -q -O - \"${key}\" | add_key_ - ${verbose}"
   added_keys+=("${key}")
 }
 
-function purge_function {
+function purge-function() {
   local package="${1}"
   eval "purge_ \"${package}\" ${verbose}"
   purged_packages+=("${package}")
 }
 
-function add_repository_function {
+function add-repository-function() {
   local repository="${1}"
   eval "add_repository_ \"${repository}\" ${verbose}" || true
   added_repositories+=("${repository}")
 }
 
-function add_source_function {
+function add-source-function() {
   local source="${1}"
   eval "add_source_ \"${source}\" ${verbose}"
   added_sources+=("${source}")
 }
 
-function upgrade_function {
-  local package="${1}"
+function upgrade-function() {
+  local package="${1-}"
   eval "upgrade_ ${package} ${verbose}"
   upgraded_packages+=("${package}")
 }
 
-printHeader ${package_manager}
+print-header ${package_manager}
 source "${SCRIPT_PATH}/../share/portunus/package-managers/${package_manager}.sh"
 if ! command -v yq 1> /dev/null; then
   ${install} yq
@@ -170,49 +157,49 @@ else
 fi
 
 # Do.
-spinner_begin "Adding keys..."
+start-spinner "Adding keys..."
 added_keys=()
 if ${explicit}; then
   if [[ ! -z "${add_key_item+x}" ]]; then
-    add_key_function "${add_key_item}"
+    add-key-function "${add_key_item}"
   fi
 else
   for key in ${keys[@]}; do
-    add_key_function "${key}"
+    add-key-function "${key}"
   done
 fi
-spinner_end
+stop-spinner ${?}
 [[ ! -z "${added_keys[@]+x}" ]] && printf "${GREEN}Added keys: %s${RESET}\n" "${added_keys[@]}"
 
-spinner_begin "Adding repositories..."
+start-spinner "Adding repositories..."
 added_repositories=()
 for repository in ${repositories[@]}; do
-  add_repository_function "${repository}"
+  add-repository-function "${repository}"
 done
-spinner_end
+stop-spinner ${?}
 [[ ! -z "${added_repositories[@]+x}" ]] && printf "${GREEN}Added repositories: %s${RESET}\n" "${added_repositories[@]}"
 
-spinner_begin "Adding sources..."
+start-spinner "Adding sources..."
 added_sources=()
 eval "cleanup_added_sources_ ${verbose}"
 for src in "${sources[@]}"; do
   protocolless_src=$(echo "${src}" | cut -d '/' -f 3-)
   if [[ ! -z "${source_files+x}" ]]; then
     if ! /bin/grep -F "$(echo "${protocolless_src}")" ${source_files} &> /dev/null; then
-      add_source_function "${source}"
+      add-source-function "${source}"
     fi
   fi
 done
-spinner_end
+stop-spinner ${?}
 [[ ! -z "${added_sources[@]+x}" ]] && printf "${GREEN}Added sources: %s${RESET}\n" "${added_sources[@]}"
 
-spinner_begin "Updating repositories..."
+start-spinner "Updating repositories..."
 updated_repositories=()
 eval "update_ ${verbose}" || true
-spinner_end
+stop-spinner ${?}
 [[ ! -z "${updated_repositories[@]+x}" ]] && printf "${GREEN}Updated repositories: %s${RESET}\n" "${updated_repositories[@]}"
 
-spinner_begin "Installing..."
+start-spinner "Installing..."
 installed_packages=()
 for package in ${installables[@]}; do
   set +e
@@ -220,13 +207,13 @@ for package in ${installables[@]}; do
   return_code=${?}
   set -e
   if [[ ${return_code} -ne 0 ]]; then
-    install_function "${package}"
+    install-function "${package}"
   fi
 done
-spinner_end
+stop-spinner ${?}
 [[ ! -z "${installed_packages[@]+x}" ]] && printf "${GREEN}Installed packages: %s${RESET}\n" "${installed_packages[@]}"
 
-spinner_begin "wgetting..."
+start-spinner "wgetting..."
 wgot_packages=()
 for wget in ${wgetables[@]}; do
   name=$(echo ${wget} | cut -d '/' -f 3 | cut -d '.' -f 2)
@@ -249,10 +236,10 @@ for wget in ${wgetables[@]}; do
   fi
   wgot_packages+=("${wget}")
 done
-spinner_end
+stop-spinner ${?}
 [[ ! -z "${wgot_packages[@]+x}" ]] && printf "${GREEN}wgot packages: %s${RESET}\n" "${wgot_packages[@]}"
 
-spinner_begin "Purging..."
+start-spinner "Purging..."
 purged_packages=()
 for package in ${purgeables[@]}; do
   set +e
@@ -260,38 +247,38 @@ for package in ${purgeables[@]}; do
   return_code=${?}
   set -e
   if [[ ${return_code} -eq 0 ]]; then
-    purge_function "${package}"
+    purge-function "${package}"
   fi
 done
-spinner_end
+stop-spinner ${?}
 [[ ! -z "${purged_packages[@]+x}" ]] && printf "${GREEN}Purged packages: %s${RESET}\n" "${purged_packages[@]}"
 
-spinner_begin "Upgrading..."
+start-spinner "Upgrading..."
 upgraded_packages=()
 if ${explicit}; then
   if [[ ! -z "${upgrade_item+x}" ]]; then
-    upgrade_function ${upgrade_item}
+    upgrade-function ${upgrade_item}
   fi
 else
-  upgrade_function
+  upgrade-function
 fi
-spinner_end
+stop-spinner ${?}
 [[ ! -z "${upgraded_packages[@]+x}" ]] && printf "${GREEN}Upgraded packages: %s${RESET}\n" "${upgraded_packages[@]}"
 
 if ! ${explicit}; then
-  spinner_begin "Running custom commands..."
+  start-spinner "Running custom commands..."
   for cmd in "${commands[@]}"; do
       eval "${cmd} ${verbose}"
     done
-  spinner_end
+  stop-spinner ${?}
 fi
 
-spinner_begin "Removing unused packages..."
+start-spinner "Removing unused packages..."
 eval "autoremove_ ${verbose}"
-spinner_end
+stop-spinner ${?}
 
-spinner_begin "Upgrading operating system..."
+start-spinner "Upgrading operating system..."
 eval "upgrade_os_ ${verbose}" || true
-spinner_end
+stop-spinner ${?}
 
 eval "cleanup_added_sources_ ${verbose}"
