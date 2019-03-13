@@ -81,4 +81,3 @@ function manual_install_ {
   repoctl -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

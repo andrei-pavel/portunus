@@ -81,4 +81,3 @@ function manual_install_ {
   naaman -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

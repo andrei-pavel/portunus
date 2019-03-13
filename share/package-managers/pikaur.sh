@@ -81,4 +81,3 @@ function manual_install_ {
   pikaur -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

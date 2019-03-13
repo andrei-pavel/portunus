@@ -81,4 +81,3 @@ function manual_install_ {
   bauerbill -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

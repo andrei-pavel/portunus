@@ -81,4 +81,3 @@ function manual_install_ {
   pacman -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

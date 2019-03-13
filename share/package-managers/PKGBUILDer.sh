@@ -81,4 +81,3 @@ function manual_install_ {
   PKGBUILDer -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

@@ -81,4 +81,3 @@ function manual_install_ {
   yay -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

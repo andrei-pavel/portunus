@@ -76,4 +76,3 @@ function manual_install_ {
   true
   return "${?}"
 }
-

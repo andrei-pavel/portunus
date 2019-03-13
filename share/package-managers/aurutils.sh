@@ -81,4 +81,3 @@ function manual_install_ {
   aurutils -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

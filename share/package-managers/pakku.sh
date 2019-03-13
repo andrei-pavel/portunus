@@ -81,4 +81,3 @@ function manual_install_ {
   pakku -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

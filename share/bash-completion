@@ -11,4 +11,3 @@ function _curate_pkg {
 }
 
 complete -F _curate_pkg portunus
-

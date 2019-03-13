@@ -81,4 +81,3 @@ function manual_install_ {
   aura -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

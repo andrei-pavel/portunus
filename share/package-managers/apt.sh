@@ -80,4 +80,3 @@ function manual_install_ {
   dpkg --install "${package}"
   return "${?}"
 }
-

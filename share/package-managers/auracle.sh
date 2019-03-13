@@ -81,4 +81,3 @@ function manual_install_ {
   auracle -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

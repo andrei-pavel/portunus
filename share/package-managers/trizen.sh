@@ -81,4 +81,3 @@ function manual_install_ {
   trizen -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

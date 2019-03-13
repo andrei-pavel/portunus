@@ -81,4 +81,3 @@ function manual_install_ {
   package-query -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-

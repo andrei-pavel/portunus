@@ -81,4 +81,3 @@ function manual_install_ {
   aurman -Sq --overwrite '*' --noconfirm "${package}"
   return "${?}"
 }
-
