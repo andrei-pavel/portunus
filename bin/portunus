@@ -46,7 +46,7 @@ while (( ${#} > 0 )); do
   # [-v|--verbose]                               Verbose output
   '-v'|'--verbose') additional+=" ${1}" ;;
   # [-V|--version]                               Display version and exit.
-  '-V'|'--version') printf 'v2.02\n' && exit 0 ;;
+  '-V'|'--version') printf 'v2.03\n' && exit 0 ;;
   *)
     # \$package_manager                             Run only for this specific package manager.
     [[ -z "${explicit_package_manager+x}" ]] && explicit_package_manager="${1}" && shift && continue
